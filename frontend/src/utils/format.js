@@ -19,6 +19,19 @@ export const FIELD_STATUS = {
   unsure: { label: '待确认', type: 'warning' },
   missing: { label: '缺失', type: 'danger' },
   invalid: { label: '无效', type: 'danger' },
+  edited: { label: '已修改', type: 'primary' },
+}
+
+export const EX_STATUS = {
+  draft: { label: '草稿', type: 'warning' },
+  confirmed: { label: '已确认', type: 'success' },
+}
+
+export const SECTION_STATUS = {
+  same: { label: '一致', type: 'info' },
+  changed: { label: '变更', type: 'warning' },
+  added: { label: '新增', type: 'success' },
+  removed: { label: '移除', type: 'danger' },
 }
 
 export const DIFF_STATUS = {

@@ -31,6 +31,11 @@ export const http = {
     return request(path, { method: 'POST', body: form })
   },
   postForm: (path, form) => request(path, { method: 'POST', body: form }),
+  uploadMany: (path, files) => {
+    const form = new FormData()
+    for (const file of files) form.append('files', file)
+    return request(path, { method: 'POST', body: form })
+  },
 }
 
 /** 轮询任务直到结束（带超时上限）。 */
