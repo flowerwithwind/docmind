@@ -13,8 +13,10 @@ router = APIRouter(prefix="/api/settings", tags=["settings"])
 
 @router.get("")
 def get_settings() -> SettingsOut:
+    model = settings_svc.get_model_settings()
+    model["api_key"] = settings_svc.mask_api_key(model.get("api_key", ""))
     return SettingsOut(
-        model=settings_svc.get_model_settings(),
+        model=model,
         retrieval=settings_svc.get_retrieval_settings(),
         capabilities=settings_svc.get_capabilities(),
     )

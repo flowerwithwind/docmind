@@ -48,9 +48,23 @@ def get_retrieval_settings() -> dict[str, Any]:
 def save_model_settings(data: dict[str, Any]) -> dict[str, Any]:
     cur = get_model_settings()
     allowed = {k: v for k, v in data.items() if k in cur}
+    # API Key 保护：空值或与脱敏值相同视为“未修改”，保留原 Key
+    if "api_key" in allowed:
+        incoming = allowed["api_key"]
+        if incoming == "" or incoming == mask_api_key(cur.get("api_key", "")):
+            del allowed["api_key"]
     cur.update(allowed)
     db.set_setting(MODEL_KEY, cur)
     return cur
+
+
+def mask_api_key(key: str) -> str:
+    """脱敏展示：仅保留前 4 与后 4 位，中间以星号替代。"""
+    if not key:
+        return ""
+    if len(key) <= 8:
+        return "****"
+    return f"{key[:4]}****{key[-4:]}"
 
 
 def save_retrieval_settings(data: dict[str, Any]) -> dict[str, Any]:

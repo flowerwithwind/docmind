@@ -24,7 +24,7 @@
 ## 技术架构
 
 ```
-浏览器 (Vue 3 + Vite + Element Plus + ECharts)
+浏览器 (Vue 3 + Vite + Element Plus + Marked/DOMPurify)
    │  REST / SSE 流式
    ▼
 FastAPI 应用层（文档 / 任务 / 会话 / 抽取 / 对比 / 样例 / 设置 / 演示）
@@ -37,7 +37,7 @@ FastAPI 应用层（文档 / 任务 / 会话 / 抽取 / 对比 / 样例 / 设置
 部署：Docker Compose（Nginx 同源反代 /api + SSE 透传）· GitHub Actions CI
 ```
 
-技术栈：Python 3.11 · FastAPI · SQLite · Vue 3 · Vite · Element Plus · ECharts · Docker · GitHub Actions
+技术栈：Python 3.11 · FastAPI · SQLite · Vue 3 · Vite · Element Plus · Marked/DOMPurify · Docker · GitHub Actions
 
 ## 快速开始
 

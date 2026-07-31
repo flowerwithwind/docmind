@@ -66,7 +66,7 @@
       </div>
     </section>
 
-    <footer class="foot">DocMind v0.1.0 · Vue 3 + FastAPI + SQLite · 求职作品集项目</footer>
+    <footer class="foot">DocMind v1.0.0 · Vue 3 + FastAPI + SQLite · 求职作品集项目</footer>
   </div>
 </template>
 <script setup>

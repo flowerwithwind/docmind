@@ -102,21 +102,21 @@ class LLMClient:
                 httpx.Client(timeout=self.timeout) as client,
                 client.stream("POST", f"{self.base_url}/chat/completions", json=payload, headers=self._headers()) as resp,
             ):
-                    if resp.status_code >= 400:
-                        raise LLMError(f"模型接口错误 {resp.status_code}: {resp.read()[:300]}")
-                    for line in resp.iter_lines():
-                        if not line or not line.startswith("data:"):
-                            continue
-                        data = line[len("data:"):].strip()
-                        if data == "[DONE]":
-                            break
-                        try:
-                            chunk = json.loads(data)
-                            delta = chunk["choices"][0]["delta"].get("content")
-                        except (KeyError, IndexError, ValueError):
-                            continue
-                        if delta:
-                            yield delta
+                if resp.status_code >= 400:
+                    raise LLMError(f"模型接口错误 {resp.status_code}: {resp.read()[:300]}")
+                for line in resp.iter_lines():
+                    if not line or not line.startswith("data:"):
+                        continue
+                    data = line[len("data:"):].strip()
+                    if data == "[DONE]":
+                        break
+                    try:
+                        chunk = json.loads(data)
+                        delta = chunk["choices"][0]["delta"].get("content")
+                    except (KeyError, IndexError, ValueError):
+                        continue
+                    if delta:
+                        yield delta
         except httpx.HTTPError as e:
             raise LLMError(f"模型请求失败：{e.__class__.__name__}") from e
 

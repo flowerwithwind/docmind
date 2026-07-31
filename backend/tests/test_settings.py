@@ -37,3 +37,20 @@ def test_test_connection_without_key(client):
 def test_tasks_empty_and_missing(client):
     assert client.get("/api/tasks").json() == []
     assert client.get("/api/tasks/99999").status_code == 404
+
+
+def test_settings_api_key_masked(client):
+    """API Key 保存后仅返回脱敏值，且再次提交脱敏值不会覆盖原 Key。"""
+    key = "sk-test1234567890abcd"
+    r = client.put("/api/settings", json={"model": {"api_key": key}})
+    assert r.status_code == 200
+    assert key not in r.text  # 响应不得泄露原文
+    assert r.json()["model"]["api_key"] == "sk-t****abcd"
+    # 再次提交脱敏值视为未修改，原 Key 保留
+    r2 = client.put("/api/settings", json={"model": {"api_key": "sk-t****abcd"}})
+    assert r2.status_code == 200
+    assert r2.json()["model"]["api_key"] == "sk-t****abcd"
+    # 提交空值同样视为未修改
+    r3 = client.put("/api/settings", json={"model": {"api_key": ""}})
+    assert r3.status_code == 200
+    assert r3.json()["model"]["api_key"] == "sk-t****abcd"

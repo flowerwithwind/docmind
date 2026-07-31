@@ -21,7 +21,7 @@ from app.api import (
     settings,
     tasks,
 )
-from app.config import ensure_dirs
+from app.config import PROJECT_ROOT, ensure_dirs
 from app.seed import ensure_seed_schemas
 from app.storage import db
 from app.utils.limits import RateLimitMiddleware
@@ -40,10 +40,18 @@ async def lifespan(app: FastAPI):
     yield
 
 
+def _read_version() -> str:
+    """读取 VERSION 文件作为应用版本（与健康检查保持一致）。"""
+    try:
+        return (PROJECT_ROOT / "VERSION").read_text(encoding="utf-8").strip()
+    except OSError:
+        return "0.0.0"
+
+
 app = FastAPI(
     title="DocMind API",
     description="多模态文档智能助手后端",
-    version="0.1.0",
+    version=_read_version(),
     lifespan=lifespan,
 )
 
@@ -70,3 +78,5 @@ app.include_router(extractions.router)
 app.include_router(samples.router)
 app.include_router(compares.router)
 app.include_router(data.router)
+
+
