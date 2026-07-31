@@ -1,10 +1,11 @@
-"""异步任务执行器：解析任务（线程池执行，避免阻塞事件循环）。"""
+"""异步任务执行器：解析 / 抽取任务（线程池执行，避免阻塞请求线程与事件循环）。"""
 
 from __future__ import annotations
 
 import asyncio
 
 from app.services.chunker import attach_chunk_ids, build_chunks, build_tree
+from app.services.extraction import ExtractionError, extract_document
 from app.services.parser import ParseError, parse_document
 from app.services.retrieval import INDEX
 from app.storage import db
@@ -21,8 +22,27 @@ def schedule_parse(doc_id: int) -> int:
     return task_id
 
 
+def schedule_extract(doc_id: int, schema_id: int) -> int:
+    """创建抽取任务并后台执行；同文档 + Schema 已有进行中任务时抛 ExtractionError(409)。"""
+    if _has_active_extract(doc_id, schema_id):
+        raise ExtractionError("该文档正在抽取同一 Schema，请稍后重试", 409)
+    task_id = db.create_task("extract", {"doc_id": doc_id, "schema_id": schema_id})
+    _spawn(run_extract(task_id, doc_id, schema_id))
+    return task_id
+
+
+def _has_active_extract(doc_id: int, schema_id: int) -> bool:
+    for row in db.list_tasks(kind="extract", limit=100):
+        if row["status"] not in ("pending", "running"):
+            continue
+        payload = db.jloads(row["payload_json"], {})
+        if payload.get("doc_id") == doc_id and payload.get("schema_id") == schema_id:
+            return True
+    return False
+
+
 def _spawn(coro) -> None:
-    """在独立守护线程中执行协程，避免阻塞请求线程/事件循环。"""
+    """在独立守护线程中执行协程，避免阻塞请求线程 / 事件循环。"""
     import threading
 
     def _runner() -> None:
@@ -30,6 +50,8 @@ def _spawn(coro) -> None:
 
     threading.Thread(target=_runner, daemon=True).start()
 
+
+# ---------------------------------------------------------------- parse
 
 def _parse_work(task_id: int, doc_id: int) -> dict:
     db.update_task(task_id, status="running", progress=5, message="开始解析")
@@ -77,11 +99,58 @@ async def run_parse(task_id: int, doc_id: int) -> None:
             progress=100,
             message="解析完成",
             result_json=db.jdumps(res),
+            finished_at=db.now_iso(),
         )
     except ParseError as e:
         db.update_document(doc_id, status="failed", parse_error=str(e))
-        db.update_task(task_id, status="failed", error=str(e))
+        db.update_task(task_id, status="failed", error=str(e), finished_at=db.now_iso())
     except Exception as e:
         logger.exception("parse task failed")
         db.update_document(doc_id, status="failed", parse_error=f"解析异常：{e}")
-        db.update_task(task_id, status="failed", error=f"解析异常：{e}")
+        db.update_task(task_id, status="failed", error=f"解析异常：{e}", finished_at=db.now_iso())
+
+
+# ---------------------------------------------------------------- extract
+
+def _extract_work(task_id: int, doc_id: int, schema_id: int) -> dict:
+    db.update_task(task_id, status="running", progress=10, message="开始抽取")
+    res = extract_document(doc_id, schema_id)
+    db.update_task(task_id, progress=80, message="保存抽取结果")
+    ext_id = db.create_extraction(doc_id, schema_id, source=res["source"])
+    db.update_extraction(
+        ext_id,
+        data_json=db.jdumps(res["data"]),
+        confidence_json=db.jdumps(res["confidence"]),
+        field_status_json=db.jdumps(res["field_status"]),
+        citations_json=db.jdumps(res["citations"]),
+        llm_raw=res.get("llm_raw"),
+        model_json=db.jdumps(res["data"]),
+    )
+    counts = {
+        s: sum(1 for v in res["field_status"].values() if v == s)
+        for s in ("extracted", "unsure", "missing", "invalid")
+    }
+    return {
+        "extraction_id": ext_id,
+        "source": res["source"],
+        "field_count": len(res["data"]),
+        **counts,
+    }
+
+
+async def run_extract(task_id: int, doc_id: int, schema_id: int) -> None:
+    try:
+        res = await asyncio.to_thread(_extract_work, task_id, doc_id, schema_id)
+        db.update_task(
+            task_id,
+            status="succeeded",
+            progress=100,
+            message="抽取完成",
+            result_json=db.jdumps(res),
+            finished_at=db.now_iso(),
+        )
+    except ExtractionError as e:
+        db.update_task(task_id, status="failed", error=str(e), finished_at=db.now_iso())
+    except Exception as e:
+        logger.exception("extract task failed")
+        db.update_task(task_id, status="failed", error=f"抽取异常：{e}", finished_at=db.now_iso())

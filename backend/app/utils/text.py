@@ -119,3 +119,44 @@ def truncate(text: str, limit: int) -> str:
 def first_line(text: str, limit: int = 30) -> str:
     line = (text or "").strip().splitlines()[0] if text.strip() else ""
     return truncate(line, limit)
+
+
+def normalize_value(field: dict, value: object) -> tuple[object, bool]:
+    """按字段类型 / 枚举归一化抽取值，返回 (值, 是否合法)。
+
+    - number: 必须可转为数值；date: 必须为 ISO 日期；enum: 必须在枚举内
+    - None / 空字符串视为缺失（值 None、合法 False，由调用方决定 missing/invalid）
+    """
+    if value is None:
+        return None, False
+    if isinstance(value, str):
+        value = value.strip()
+    if value == "":
+        return None, False
+    ftype = field.get("type") or "string"
+    if ftype == "number":
+        v = normalize_number(value)
+        if v is None:
+            return None, False
+        return int(v) if float(v).is_integer() else v, True
+    if ftype == "date":
+        v = normalize_date(value)
+        return v, v is not None
+    if ftype == "list":
+        if isinstance(value, str):
+            items = [x.strip() for x in re.split(r"[、,，;；\n]", value) if x.strip()]
+        elif isinstance(value, list):
+            items = [str(x).strip() for x in value if str(x).strip()]
+        else:
+            return None, False
+        return items, True
+    if ftype == "object":
+        return value, isinstance(value, dict)
+    if field.get("enum"):
+        if value in field["enum"]:
+            return value, True
+        for opt in field["enum"]:
+            if str(value) in opt or opt in str(value):
+                return opt, True
+        return None, False
+    return str(value), True

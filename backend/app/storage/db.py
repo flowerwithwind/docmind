@@ -185,6 +185,9 @@ def _migrate(conn: sqlite3.Connection) -> None:
     for name, decl in (("pages_json", "TEXT"), ("tree_json", "TEXT")):
         if name not in cols:
             conn.execute(f"ALTER TABLE documents ADD COLUMN {name} {decl}")
+    ext_cols = {row[1] for row in conn.execute("PRAGMA table_info(extractions)")}
+    if "model_json" not in ext_cols:
+        conn.execute("ALTER TABLE extractions ADD COLUMN model_json TEXT")
 
 
 def wipe_data() -> None:
@@ -419,6 +422,23 @@ def delete_sample(sample_id: int) -> None:
 def delete_samples(doc_id: int) -> None:
     with get_conn() as conn:
         conn.execute("DELETE FROM samples WHERE doc_id=?", (doc_id,))
+
+
+def get_sample(sample_id: int) -> sqlite3.Row | None:
+    with get_conn() as conn:
+        return conn.execute("SELECT * FROM samples WHERE id=?", (sample_id,)).fetchone()
+
+
+def get_samples_for_extraction(extraction_id: int) -> list[sqlite3.Row]:
+    with get_conn() as conn:
+        return list(conn.execute(
+            "SELECT * FROM samples WHERE extraction_id=? ORDER BY id",
+            (extraction_id,)))
+
+
+def clear_samples() -> None:
+    with get_conn() as conn:
+        conn.execute("DELETE FROM samples")
 
 
 # ---------------------------------------------------------------- sessions / messages

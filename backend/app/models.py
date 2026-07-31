@@ -59,6 +59,7 @@ class FieldStatus(StrEnum):
     UNSURE = "unsure"
     MISSING = "missing"
     INVALID = "invalid"
+    EDITED = "edited"
 
 
 class ExtractionSource(StrEnum):
@@ -233,6 +234,16 @@ class CompareResult(BaseModel):
     summary: str = ""
     source: str = "rule"
     created_at: str
+
+
+class ExtractRequest(BaseModel):
+    schema_id: int
+
+
+class ExtractionEditIn(BaseModel):
+    """人工编辑字段值（仅包含被修改的字段）。"""
+
+    data: dict[str, Any] = {}
 
 
 class ChatRequest(BaseModel):
