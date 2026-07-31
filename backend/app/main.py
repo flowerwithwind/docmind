@@ -19,10 +19,12 @@ from app.api import (
     samples,
     schemas,
     settings,
+    table_qa,
     tasks,
 )
 from app.config import PROJECT_ROOT, ensure_dirs
 from app.seed import ensure_seed_schemas
+from app.services.table_store import table_store
 from app.storage import db
 from app.utils.limits import RateLimitMiddleware
 from app.utils.logging import get_logger
@@ -35,6 +37,7 @@ async def lifespan(app: FastAPI):
     ensure_dirs()
     db.init_db()
     ensure_seed_schemas()
+    table_store.ensure_demo()  # B2：无 Key 时也内置演示表可查询
     db.fail_stale_tasks()
     logger.info("DocMind 启动完成")
     yield
@@ -78,5 +81,6 @@ app.include_router(extractions.router)
 app.include_router(samples.router)
 app.include_router(compares.router)
 app.include_router(data.router)
+app.include_router(table_qa.router)
 
 

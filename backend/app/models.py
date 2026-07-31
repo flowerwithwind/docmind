@@ -269,3 +269,46 @@ class SettingsOut(BaseModel):
     model: dict[str, Any]
     retrieval: dict[str, Any]
     capabilities: dict[str, bool]
+
+
+class ChartData(BaseModel):
+    """表格问答图表数据（B2）：type ∈ line / bar / table。"""
+
+    type: str = "table"
+    columns: list[str] = Field(default_factory=list)
+    rows: list[list[Any]] = Field(default_factory=list)
+
+
+class TableQAMetrics(BaseModel):
+    """表格问答耗时/token 指标（B2）。"""
+
+    elapsed_ms: int = 0
+    attempts: int = 0
+    tokens: int = 0
+    intent: str = ""
+    table_id: str = ""
+    table_name: str = ""
+    row_count: int = 0
+    fallback_reason: str = ""
+
+
+class TableQARequest(BaseModel):
+    """POST /api/qa/table 入参：表格来源标识（table_id/doc_id）或内联表结构 + 问题。"""
+
+    question: str = Field(min_length=1, max_length=2000)
+    table_id: str | None = None
+    doc_id: int | None = None
+    table: dict[str, Any] | None = None
+
+
+class TableQAOut(BaseModel):
+    """POST /api/qa/table 出参：答案、SQL、行列数据、图表、来源（llm/demo）与指标。"""
+
+    answer: str = ""
+    sql: str = ""
+    columns: list[str] = Field(default_factory=list)
+    rows: list[list[Any]] = Field(default_factory=list)
+    chart: ChartData = Field(default_factory=ChartData)
+    source: str = "demo"
+    tables: list[str] = Field(default_factory=list)
+    metrics: TableQAMetrics = Field(default_factory=TableQAMetrics)

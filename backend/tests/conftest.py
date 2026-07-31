@@ -16,6 +16,7 @@ from fastapi.testclient import TestClient
 from app.main import app
 from app.seed import ensure_seed_schemas
 from app.services.retrieval import INDEX
+from app.services.table_store import table_store
 from app.storage import db
 from tests.fixtures.documents import make_docx_bytes
 
@@ -25,6 +26,7 @@ def client():
     with TestClient(app) as c:
         db.wipe_data()
         INDEX.reset()
+        table_store.reset()
         ensure_seed_schemas()
         yield c
 
