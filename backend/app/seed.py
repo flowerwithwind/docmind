@@ -1,4 +1,4 @@
-﻿"""种子数据：内置 Schema、演示问题、样例注册信息。"""
+"""种子数据：内置 Schema、演示问题、样例注册信息。"""
 from __future__ import annotations
 
 from app.storage import db

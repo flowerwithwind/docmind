@@ -1,4 +1,4 @@
-﻿"""设置 API 与任务 API 测试。"""
+"""设置 API 与任务 API 测试。"""
 from __future__ import annotations
 
 

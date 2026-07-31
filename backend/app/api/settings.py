@@ -1,4 +1,4 @@
-﻿"""设置 API。"""
+"""设置 API。"""
 from __future__ import annotations
 
 from typing import Any

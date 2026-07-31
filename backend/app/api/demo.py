@@ -1,4 +1,4 @@
-﻿"""演示信息 API（样例加载在 M5 提供）。"""
+"""演示信息 API（样例加载在 M5 提供）。"""
 from __future__ import annotations
 
 from fastapi import APIRouter

@@ -1,4 +1,4 @@
-﻿"""Pydantic 数据模型与枚举。"""
+"""Pydantic 数据模型与枚举。"""
 from __future__ import annotations
 
 from datetime import datetime

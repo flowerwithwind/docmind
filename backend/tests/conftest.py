@@ -1,4 +1,4 @@
-﻿"""pytest 全局夹具：临时数据目录 + 清库测试客户端。"""
+"""pytest 全局夹具：临时数据目录 + 清库测试客户端。"""
 from __future__ import annotations
 
 import os

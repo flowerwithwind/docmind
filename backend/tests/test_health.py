@@ -1,4 +1,4 @@
-﻿"""健康检查与基础信息测试。"""
+"""健康检查与基础信息测试。"""
 from __future__ import annotations
 
 

@@ -1,0 +1,45 @@
+:root {
+  /* 设计令牌：色彩 */
+  --dm-primary: #1f6feb;
+  --dm-primary-dark: #1447a6;
+  --dm-primary-light: #e8f0fe;
+  --dm-teal: #0e7490;
+  --dm-navy: #102a43;
+  --dm-bg: #f6f8fb;
+  --dm-card: #ffffff;
+  --dm-border: #e2e8f0;
+  --dm-text: #1e293b;
+  --dm-text-muted: #64748b;
+  --dm-success: #16a34a;
+  --dm-warning: #d97706;
+  --dm-danger: #dc2626;
+  /* 设计令牌：几何 */
+  --dm-radius: 12px;
+  --dm-radius-sm: 8px;
+  --dm-shadow: 0 1px 2px rgba(16, 42, 67, 0.06), 0 4px 12px rgba(16, 42, 67, 0.08);
+  --dm-shadow-lg: 0 8px 24px rgba(16, 42, 67, 0.12);
+  /* 字体 */
+  --dm-font: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html, body, #app { height: 100%; margin: 0; }
+body {
+  font-family: var(--dm-font);
+  background: var(--dm-bg);
+  color: var(--dm-text);
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--dm-primary); text-decoration: none; }
+
+/* Element Plus 主题微调 */
+.el-card { border-radius: var(--dm-radius); border-color: var(--dm-border); }
+.el-button { border-radius: var(--dm-radius-sm); }
+.el-input__wrapper, .el-textarea__inner { border-radius: var(--dm-radius-sm); }
+
+/* 通用页面容器 */
+.page { padding: 24px 32px; max-width: 1440px; margin: 0 auto; }
+.page-title { font-size: 22px; font-weight: 700; color: var(--dm-navy); margin: 0 0 4px; }
+.page-sub { color: var(--dm-text-muted); font-size: 13px; margin: 0 0 20px; }
+.card { background: var(--dm-card); border: 1px solid var(--dm-border); border-radius: var(--dm-radius); box-shadow: var(--dm-shadow); }
+.card-pad { padding: 20px 24px; }

@@ -1,4 +1,4 @@
-﻿"""Schema 管理 API。"""
+"""Schema 管理 API。"""
 from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException

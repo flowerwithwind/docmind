@@ -1,4 +1,4 @@
-﻿"""设置服务：默认值合并、持久化、能力探测、客户端构建。"""
+"""设置服务：默认值合并、持久化、能力探测、客户端构建。"""
 from __future__ import annotations
 
 from typing import Any

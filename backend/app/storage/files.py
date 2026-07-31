@@ -1,4 +1,4 @@
-﻿"""文件存储：安全命名、读写、删除、类型判定。"""
+"""文件存储：安全命名、读写、删除、类型判定。"""
 from __future__ import annotations
 
 import shutil

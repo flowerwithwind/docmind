@@ -1,4 +1,4 @@
-﻿"""OpenAI 兼容 LLM 客户端（同步实现，兼容 DeepSeek / OpenAI / Ollama）。
+"""OpenAI 兼容 LLM 客户端（同步实现，兼容 DeepSeek / OpenAI / Ollama）。
 
 - chat / chat_stream：对话补全
 - embed：向量化（可选，用于稠密检索）

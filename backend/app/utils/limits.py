@@ -1,4 +1,4 @@
-﻿"""简易内存限流中间件（滑动窗口，按客户端 IP）。"""
+"""简易内存限流中间件（滑动窗口，按客户端 IP）。"""
 from __future__ import annotations
 
 import time

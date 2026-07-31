@@ -1,4 +1,4 @@
-﻿"""任务 API（轮询进度）。"""
+"""任务 API（轮询进度）。"""
 from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException

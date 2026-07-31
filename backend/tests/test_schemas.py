@@ -1,4 +1,4 @@
-﻿"""Schema API 测试。"""
+"""Schema API 测试。"""
 from __future__ import annotations
 
 

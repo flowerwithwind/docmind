@@ -1,4 +1,4 @@
-﻿"""日志配置（loguru）。"""
+"""日志配置（loguru）。"""
 from __future__ import annotations
 
 import sys

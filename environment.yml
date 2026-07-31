@@ -1,4 +1,4 @@
-﻿name: docmind
+name: docmind
 channels:
   - conda-forge
   - defaults

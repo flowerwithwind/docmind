@@ -1,4 +1,4 @@
-﻿"""文本处理工具：清洗、分句、分词、数值/日期归一化、token 估算。"""
+"""文本处理工具：清洗、分句、分词、数值/日期归一化、token 估算。"""
 from __future__ import annotations
 
 import re
