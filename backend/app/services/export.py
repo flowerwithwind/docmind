@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import html
 import io
 import json
 from typing import Any
@@ -118,3 +119,102 @@ def build_export(row, fmt: str) -> tuple[bytes, str, str]:
         )
     content = ("\n".join(lines) + "\n").encode("utf-8")
     return content, "text/markdown; charset=utf-8", f"extraction-{ext_id}.md"
+
+def _fmt_delta(delta: float | None) -> str:
+    if delta is None:
+        return "-"
+    return f"{delta:+.1f}%"
+
+
+def build_compare_export(row, fmt: str) -> tuple[bytes, str, str]:
+    """构建对比报告（md/html），返回 (内容字节, media_type, 文件名)。"""
+    result = db.jloads(row["result_json"], {})
+    doc_a = db.get_document(row["doc_a_id"])
+    doc_b = db.get_document(row["doc_b_id"])
+    schema = db.get_schema(row["schema_id"])
+    field_diff = result.get("field_diff", [])
+    section_diff = result.get("section_diff", [])
+    summary = result.get("summary", "")
+    name_a = doc_a["original_name"] if doc_a else f"文档{row['doc_a_id']}"
+    name_b = doc_b["original_name"] if doc_b else f"文档{row['doc_b_id']}"
+    schema_name = schema["name"] if schema else ""
+    compare_id = row["id"]
+
+    if fmt == "html":
+        lines = [
+            "<!DOCTYPE html>",
+            "<html lang='zh-CN'><head><meta charset='utf-8'>",
+            f"<title>文档对比报告 #{compare_id}</title>",
+            (
+                "<style>body{font-family:'Microsoft YaHei',sans-serif;max-width:960px;"
+                "margin:24px auto;color:#222}"
+                "table{border-collapse:collapse;width:100%;margin:12px 0}"
+                "th,td{border:1px solid #ccc;padding:8px;text-align:left;font-size:14px}"
+                "th{background:#f3f4f6}"
+                ".badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:12px}"
+                ".same{background:#e8f5e9}.changed{background:#fff3e0}"
+                ".only_a{background:#e3f2fd}.only_b{background:#fce4ec}.both_missing{background:#eee}"
+                ".added{background:#e8f5e9}.removed{background:#fce4ec}</style></head><body>"
+            ),
+            f"<h1>文档对比报告 #{compare_id}</h1>",
+            (
+                f"<p><b>{html.escape(name_a)}</b> vs <b>{html.escape(name_b)}</b>"
+                f"（Schema：{html.escape(schema_name)}，生成于 {row['created_at']}）</p>"
+            ),
+            f"<h2>摘要</h2><p>{html.escape(summary)}</p>",
+            "<h2>字段差异</h2>",
+            "<table><tr><th>字段</th><th>标签</th><th>文档 A</th><th>文档 B</th><th>状态</th><th>变化</th></tr>",
+        ]
+        for d in field_diff:
+            status = d.get("status", "")
+            lines.append(
+                f"<tr><td>{html.escape(str(d.get('key', '')))}</td>"
+                f"<td>{html.escape(str(d.get('label', '')))}</td>"
+                f"<td>{html.escape(_display(d.get('value_a')))}</td>"
+                f"<td>{html.escape(_display(d.get('value_b')))}</td>"
+                f"<td><span class='badge {status}'>{status}</span></td>"
+                f"<td>{_fmt_delta(d.get('delta_pct'))}</td></tr>"
+            )
+        lines.append("</table><h2>章节差异</h2>")
+        lines.append("<table><tr><th>章节</th><th>状态</th><th>相似度</th></tr>")
+        for d in section_diff:
+            status = d.get("status", "")
+            lines.append(
+                f"<tr><td>{html.escape(str(d.get('title', '')))}</td>"
+                f"<td><span class='badge {status}'>{status}</span></td>"
+                f"<td>{d.get('similarity', '')}</td></tr>"
+            )
+        lines.append("</table></body></html>")
+        content = ("\n".join(lines) + "\n").encode("utf-8")
+        return content, "text/html; charset=utf-8", f"compare-{compare_id}.html"
+
+    lines = [
+        f"# 文档对比报告 #{compare_id}",
+        "",
+        f"- 文档 A：{_md_escape(name_a)}",
+        f"- 文档 B：{_md_escape(name_b)}",
+        f"- Schema：{_md_escape(schema_name)}",
+        f"- 生成时间：{row['created_at']}",
+        "",
+        "## 摘要",
+        "",
+        summary or "-",
+        "",
+        "## 字段差异",
+        "",
+        "| 字段 | 标签 | 文档 A | 文档 B | 状态 | 变化 |",
+        "| --- | --- | --- | --- | --- | --- |",
+    ]
+    for d in field_diff:
+        lines.append(
+            f"| {_md_escape(d.get('key', ''))} | {_md_escape(d.get('label', ''))} | "
+            f"{_md_escape(_display(d.get('value_a')))} | {_md_escape(_display(d.get('value_b')))} | "
+            f"{d.get('status', '')} | {_fmt_delta(d.get('delta_pct'))} |"
+        )
+    lines += ["", "## 章节差异", "", "| 章节 | 状态 | 相似度 |", "| --- | --- | --- |"]
+    for d in section_diff:
+        lines.append(
+            f"| {_md_escape(d.get('title', ''))} | {d.get('status', '')} | {d.get('similarity', '')} |"
+        )
+    content = ("\n".join(lines) + "\n").encode("utf-8")
+    return content, "text/markdown; charset=utf-8", f"compare-{compare_id}.md"

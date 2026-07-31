@@ -569,3 +569,43 @@ def now_iso() -> str:
     from app.models import now_iso as _now
     return _now()
 
+# ---------------------------------------------------------------- M5 helpers
+
+def get_document_by_original_name(original_name: str) -> sqlite3.Row | None:
+    """按原始文件名查找文档（演示样例幂等判断用，同名取最新一条）。"""
+    with get_conn() as conn:
+        return conn.execute(
+            "SELECT * FROM documents WHERE original_name=? ORDER BY id DESC LIMIT 1",
+            (original_name,),
+        ).fetchone()
+
+
+def list_compares(doc_id: int | None = None) -> list[sqlite3.Row]:
+    """对比列表；doc_id 过滤时返回与该文档相关的对比（A 或 B）。"""
+    sql = "SELECT * FROM compares"
+    params: list[Any] = []
+    if doc_id is not None:
+        sql += " WHERE doc_a_id=? OR doc_b_id=?"
+        params += [doc_id, doc_id]
+    with get_conn() as conn:
+        return list(conn.execute(sql + " ORDER BY id DESC", params))
+
+
+def get_latest_extraction(doc_id: int, schema_id: int) -> sqlite3.Row | None:
+    """返回文档在指定 Schema 下的最新抽取结果（按 id 倒序）。"""
+    with get_conn() as conn:
+        return conn.execute(
+            "SELECT * FROM extractions WHERE doc_id=? AND schema_id=? ORDER BY id DESC LIMIT 1",
+            (doc_id, schema_id),
+        ).fetchone()
+
+
+def clear_user_data() -> None:
+    """清空全部用户业务数据，保留 Schema（含内置）与设置。数据管理 API 使用。"""
+    tables = (
+        "messages", "sessions", "samples", "extractions", "chunks",
+        "documents", "compares", "tasks",
+    )
+    with get_conn() as conn:
+        for t in tables:
+            conn.execute(f"DELETE FROM {t}")

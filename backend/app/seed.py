@@ -66,11 +66,11 @@ DEMO_QUESTIONS = [
 
 DEMO_SAMPLES = [
     {"kind": "contract", "name": "购销合同样例",
-     "file": "demo-contract.pdf", "hint": "含金额 / 期限 / 违约条款 / 付款表格"},
+     "file": "demo-contract.docx", "hint": "含金额 / 期限 / 违约条款 / 付款方式"},
+    {"kind": "contract_v2", "name": "购销合同对比版",
+     "file": "demo-contract-v2.docx", "hint": "金额 / 交付期限 / 违约金与 v1 不同，用于双文档对比"},
     {"kind": "financial", "name": "财报摘要样例",
-     "file": "demo-financial.pdf", "hint": "含营业收入 / 净利润 / 毛利率指标"},
-    {"kind": "invoice", "name": "扫描发票样例",
-     "file": "demo-invoice.png", "hint": "扫描件，需 OCR 或视觉模型"},
+     "file": "demo-financial.docx", "hint": "含营业收入 / 净利润 / 毛利率指标"},
 ]
 
 

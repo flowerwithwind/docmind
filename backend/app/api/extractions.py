@@ -8,7 +8,13 @@ from typing import Any
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import Response
 
-from app.models import Citation, ExtractRequest, ExtractionEditIn, ExtractionOut, TaskOut
+from app.models import (
+    Citation,
+    ExtractionEditIn,
+    ExtractionOut,
+    ExtractRequest,
+    TaskOut,
+)
 from app.services.export import build_export
 from app.services.extraction import ExtractionError
 from app.services.tasks import schedule_extract

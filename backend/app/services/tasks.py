@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 
 from app.services.chunker import attach_chunk_ids, build_chunks, build_tree
+from app.services.compare import CompareError, compare_documents
 from app.services.extraction import ExtractionError, extract_document
 from app.services.parser import ParseError, parse_document
 from app.services.retrieval import INDEX
@@ -154,3 +155,74 @@ async def run_extract(task_id: int, doc_id: int, schema_id: int) -> None:
     except Exception as e:
         logger.exception("extract task failed")
         db.update_task(task_id, status="failed", error=f"抽取异常：{e}", finished_at=db.now_iso())
+
+# ---------------------------------------------------------------- compare
+
+def schedule_compare(doc_a_id: int, doc_b_id: int, schema_id: int) -> int:
+    """创建对比任务并后台执行，返回 task_id。"""
+    task_id = db.create_task("compare", {
+        "doc_a_id": doc_a_id, "doc_b_id": doc_b_id, "schema_id": schema_id,
+    })
+    _spawn(run_compare(task_id, doc_a_id, doc_b_id, schema_id))
+    return task_id
+
+
+def _compare_work(task_id: int, doc_a_id: int, doc_b_id: int, schema_id: int) -> dict:
+    db.update_task(task_id, status="running", progress=15, message="开始对比")
+    result = compare_documents(doc_a_id, doc_b_id, schema_id)
+    db.update_task(task_id, progress=85, message="保存对比结果")
+    compare_id = db.create_compare(doc_a_id, doc_b_id, schema_id, result)
+    return {
+        "compare_id": compare_id,
+        "field_count": len(result["field_diff"]),
+        "changed_fields": sum(1 for d in result["field_diff"] if d["status"] == "changed"),
+        "section_diff_count": len(result["section_diff"]),
+    }
+
+
+async def run_compare(task_id: int, doc_a_id: int, doc_b_id: int, schema_id: int) -> None:
+    try:
+        res = await asyncio.to_thread(_compare_work, task_id, doc_a_id, doc_b_id, schema_id)
+        db.update_task(
+            task_id,
+            status="succeeded",
+            progress=100,
+            message="对比完成",
+            result_json=db.jdumps(res),
+            finished_at=db.now_iso(),
+        )
+    except CompareError as e:
+        db.update_task(task_id, status="failed", error=str(e), finished_at=db.now_iso())
+    except Exception as e:
+        logger.exception("compare task failed")
+        db.update_task(task_id, status="failed", error=f"对比异常：{e}", finished_at=db.now_iso())
+
+
+# ---------------------------------------------------------------- demo load
+
+def schedule_demo_load(kind: str, doc_id: int) -> int:
+    """创建样例加载任务（文档与文件已在 API 层创建），任务内执行解析。"""
+    task_id = db.create_task("demo_load", {"kind": kind, "doc_id": doc_id})
+    _spawn(run_demo_load(task_id, doc_id))
+    return task_id
+
+
+async def run_demo_load(task_id: int, doc_id: int) -> None:
+    db.update_task(task_id, status="running", progress=10, message="解析样例文档")
+    try:
+        parse_task_id = db.create_task("parse", {"doc_id": doc_id, "source": "demo"})
+        await run_parse(parse_task_id, doc_id)
+        parse_task = db.get_task(parse_task_id)
+        if parse_task["status"] != "succeeded":
+            raise RuntimeError(parse_task["error"] or "样例解析失败")
+        db.update_task(
+            task_id,
+            status="succeeded",
+            progress=100,
+            message="样例加载完成",
+            result_json=db.jdumps({"doc_id": doc_id, "parse_task_id": parse_task_id}),
+            finished_at=db.now_iso(),
+        )
+    except Exception as e:
+        logger.exception("demo load task failed")
+        db.update_task(task_id, status="failed", error=f"样例加载失败：{e}", finished_at=db.now_iso())

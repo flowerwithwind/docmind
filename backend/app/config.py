@@ -37,7 +37,7 @@ DEFAULT_EMBEDDING_MODEL = os.environ.get("DOCMIND_EMBEDDING_MODEL", "text-embedd
 DEFAULT_EMBEDDING_BASE_URL = os.environ.get("DOCMIND_EMBEDDING_BASE_URL", "")
 DEFAULT_EMBEDDING_API_KEY = os.environ.get("DOCMIND_EMBEDDING_API_KEY", "")
 
-DEMO_KINDS = ("contract", "financial", "invoice")
+DEMO_KINDS = ("contract", "contract_v2", "financial")
 
 # 限流：默认 60 req/min/IP
 RATE_LIMIT_PER_MINUTE = int(os.environ.get("DOCMIND_RATE_LIMIT", "60"))

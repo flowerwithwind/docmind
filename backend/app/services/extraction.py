@@ -195,8 +195,10 @@ def _fields_spec(fields: list[dict[str, Any]]) -> str:
     lines: list[str] = []
     for f in fields:
         parts = [
-            f"- {f['key']}（{f.get('label')}，{f.get('type')}，"
-            f"{'必填' if f.get('required') else '可选'}）"
+            (
+                f"- {f['key']}（{f.get('label')}，{f.get('type')}，"
+                f"{'必填' if f.get('required') else '可选'}）"
+            )
         ]
         if f.get("description"):
             parts.append(f"说明：{f['description']}")

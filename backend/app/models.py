@@ -236,6 +236,12 @@ class CompareResult(BaseModel):
     created_at: str
 
 
+class CompareRequest(BaseModel):
+    doc_a_id: int
+    doc_b_id: int
+    schema_id: int
+
+
 class ExtractRequest(BaseModel):
     schema_id: int
 
@@ -254,7 +260,7 @@ class ChatRequest(BaseModel):
 
 
 class DemoInfo(BaseModel):
-    samples: list[dict[str, str]]
+    samples: list[dict[str, Any]]
     questions: list[str]
     capabilities: dict[str, bool]
 

@@ -7,7 +7,20 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import chat, demo, documents, extractions, health, media, samples, schemas, settings, tasks
+from app.api import (
+    chat,
+    compares,
+    data,
+    demo,
+    documents,
+    extractions,
+    health,
+    media,
+    samples,
+    schemas,
+    settings,
+    tasks,
+)
 from app.config import ensure_dirs
 from app.seed import ensure_seed_schemas
 from app.storage import db
@@ -55,3 +68,5 @@ app.include_router(chat.chat_router)
 app.include_router(extractions.documents_router)
 app.include_router(extractions.router)
 app.include_router(samples.router)
+app.include_router(compares.router)
+app.include_router(data.router)

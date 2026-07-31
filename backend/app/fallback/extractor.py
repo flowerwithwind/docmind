@@ -203,10 +203,8 @@ class RuleExtractor:
             return
         num = float(m.group("num").replace(",", "").replace("，", ""))
         unit = m.group("unit")
-        if policy == "pct":
-            pass
-        elif policy == "yuan":
-            pass
+        if policy in ("pct", "yuan"):
+            pass  # 百分比 / 元口径由字段定义声明，不做单位换算
         elif unit == "亿元":
             num *= 10000
         elif unit == "元":

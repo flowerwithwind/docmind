@@ -72,3 +72,11 @@ def copy_seed_to_store(seed_file: Path) -> str:
     stored = f"{uuid.uuid4().hex}{seed_file.suffix.lower()}"
     shutil.copyfile(seed_file, FILES_DIR / stored)
     return stored
+
+def save_bytes(ext: str, data: bytes) -> str:
+    """保存内存字节流为存储文件（演示样例生成用），返回存储文件名。"""
+    stored = f"{uuid.uuid4().hex}{ext.lower()}"
+    target = FILES_DIR / stored
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_bytes(data)
+    return stored
