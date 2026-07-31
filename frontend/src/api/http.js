@@ -15,7 +15,9 @@ async function request(path, options = {}) {
     const detail = typeof data === 'object' && data && data.detail
       ? (Array.isArray(data.detail) ? data.detail.map((d) => d.msg).join('；') : String(data.detail))
       : `请求失败（${resp.status}）`
-    throw new Error(detail)
+    const err = new Error(detail)
+    err.status = resp.status
+    throw err
   }
   return data
 }

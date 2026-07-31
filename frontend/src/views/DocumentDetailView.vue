@@ -32,6 +32,9 @@
         <el-tab-pane label="问答" name="qa" lazy>
           <QaTab :doc-id="doc.id" />
         </el-tab-pane>
+        <el-tab-pane label="表格问答" name="table-qa" lazy>
+          <TableQaTab :doc-id="doc.id" />
+        </el-tab-pane>
         <el-tab-pane label="结构化抽取" name="extract" lazy>
           <ExtractTab :doc="doc" :data="data" />
         </el-tab-pane>
@@ -57,6 +60,7 @@ import SkeletonLoader from '@/components/SkeletonLoader.vue'
 import ErrorState from '@/components/ErrorState.vue'
 import PreviewTab from '@/views/detail/PreviewTab.vue'
 import QaTab from '@/views/detail/QaTab.vue'
+import TableQaTab from '@/views/detail/TableQaTab.vue'
 import ExtractTab from '@/views/detail/ExtractTab.vue'
 import CompareTab from '@/views/detail/CompareTab.vue'
 import { formatSize, formatTime } from '@/utils/format'

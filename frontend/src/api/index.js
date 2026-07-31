@@ -57,4 +57,7 @@ export const api = {
   getSession: (id) => http.get('/sessions/' + id),
   deleteSession: (id) => http.delete('/sessions/' + id),
   chat: (docId, body) => http.post('/documents/' + docId + '/chat', body),
+  // 表格问答
+  listQaTables: () => http.get('/qa/tables'),
+  tableQa: (body) => http.post('/qa/table', body),
 }
