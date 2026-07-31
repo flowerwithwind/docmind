@@ -242,7 +242,33 @@ def list_documents(query: str = "", status: str = "", ext: str = "",
         return list(rows), int(total)
 
 
+
+# 动态 UPDATE 字段白名单（B4 防御：未知字段直接拒绝）
+_ALLOWED_UPDATE_FIELDS = {
+    "documents": {
+        "name", "original_name", "status", "parse_error", "page_count", "char_count",
+        "chunk_count", "pages_json", "tree_json", "mime", "size_bytes",
+    },
+    "extractions": {
+        "status", "source", "error", "data_json", "confidence_json",
+        "field_status_json", "citations_json", "llm_raw", "model_json", "confirmed_at",
+    },
+    "tasks": {
+        "status", "progress", "message", "result_json", "error", "payload_json", "finished_at",
+    },
+}
+
+
+def _allowed_update_fields(table: str, fields: dict[str, Any]) -> dict[str, Any]:
+    """按表白名单过滤动态 UPDATE 字段；含未知字段时抛 ValueError。"""
+    allowed = _ALLOWED_UPDATE_FIELDS.get(table, set())
+    unknown = set(fields) - allowed
+    if unknown:
+        raise ValueError(f"非法更新字段 {table}: {sorted(unknown)}")
+    return {k: v for k, v in fields.items() if k in allowed}
+
 def update_document(doc_id: int, **fields: Any) -> None:
+    fields = _allowed_update_fields("documents", fields)
     if not fields:
         return
     keys = ", ".join(f"{k}=?" for k in fields)
@@ -366,6 +392,7 @@ def list_extractions(doc_id: int) -> list[sqlite3.Row]:
 
 
 def update_extraction(extraction_id: int, **fields: Any) -> None:
+    fields = _allowed_update_fields("extractions", fields)
     if not fields:
         return
     keys = ", ".join(f"{k}=?" for k in fields)
@@ -511,7 +538,45 @@ def create_task(kind: str, payload: dict[str, Any] | None = None) -> int:
         return int(cur.lastrowid)
 
 
+def create_extract_task_if_absent(doc_id: int, schema_id: int) -> int | None:
+    """原子创建抽取任务（B4）：同文档 + Schema 有进行中任务时返回 None。
+
+    使用 BEGIN IMMEDIATE 串行化写入，避免「先查后插」并发重复。
+    """
+    conn = _connect()
+    try:
+        conn.execute("BEGIN IMMEDIATE")
+        payload = jdumps({"doc_id": doc_id, "schema_id": schema_id})
+        row = conn.execute(
+            "SELECT id FROM tasks WHERE kind='extract' AND status IN ('pending','running') AND payload_json=?",
+            (payload,),
+        ).fetchone()
+        if row is not None:
+            conn.execute("COMMIT")
+            return None
+        cur = conn.execute(
+            "INSERT INTO tasks(kind, status, progress, message, payload_json, created_at) VALUES('extract','pending',0,'',?,?)",
+            (payload, now_iso()),
+        )
+        conn.execute("COMMIT")
+        return int(cur.lastrowid)
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
+
+
+def delete_tasks_by_ids(task_ids: list[int]) -> None:
+    """批量删除任务（B4：上传失败补偿清理用）。"""
+    if not task_ids:
+        return
+    marks = ",".join("?" for _ in task_ids)
+    with get_conn() as conn:
+        conn.execute(f"DELETE FROM tasks WHERE id IN ({marks})", task_ids)
+
 def update_task(task_id: int, **fields: Any) -> None:
+    fields = _allowed_update_fields("tasks", fields)
     if not fields:
         return
     keys = ", ".join(f"{k}=?" for k in fields)

@@ -32,8 +32,8 @@
             </el-option>
           </el-select>
           <div class="spacer"></div>
-          <el-button v-if="result" plain :disabled="taskRunning" @click="restartExtract"><el-icon><Refresh /></el-icon>重新抽取</el-button>
-          <el-button v-else type="primary" :loading="taskRunning" @click="startExtract"><el-icon><MagicStick /></el-icon>开始抽取</el-button>
+          <el-button v-if="result" plain :disabled="taskRunning || starting" @click="restartExtract"><el-icon><Refresh /></el-icon>重新抽取</el-button>
+          <el-button v-else type="primary" :loading="taskRunning || starting" :disabled="taskRunning || starting" @click="startExtract"><el-icon><MagicStick /></el-icon>开始抽取</el-button>
         </div>
 
         <TaskProgress v-if="taskRunning" :running="taskRunning" :progress="progress" :message="message" label="正在结构化抽取…" class="task-line" />
@@ -181,6 +181,7 @@ const activeExtId = ref(null)
 const loading = ref(true)
 const loadError = ref('')
 const confirming = ref(false)
+const starting = ref(false)
 const drawerVisible = ref(false)
 const activeCitation = ref(null)
 const activeChunk = ref(null)
@@ -253,7 +254,8 @@ async function reloadExtractions() {
   }
 }
 async function startExtract() {
-  if (!schemaId.value) return
+  if (!schemaId.value || taskRunning.value || starting.value) return
+  starting.value = true
   taskError.value = ''
   try {
     const body = await api.startExtract(props.doc.id, schemaId.value)
@@ -262,13 +264,16 @@ async function startExtract() {
     ElMessage.success('抽取完成')
   } catch (e) {
     ElMessage.error(e.message || '抽取失败')
+  } finally {
+    starting.value = false
   }
 }
 async function restartExtract() {
-  if (!result.value) return
+  if (!result.value || taskRunning.value || starting.value) return
   try {
     await ElMessageBox.confirm('重新抽取将生成一份新的抽取结果（已确认的旧结果保留为历史），确定继续？', '重新抽取', { type: 'warning', confirmButtonText: '重新抽取' })
   } catch { return }
+  starting.value = true
   taskError.value = ''
   try {
     const body = result.value.status === 'confirmed'
@@ -279,6 +284,8 @@ async function restartExtract() {
     ElMessage.success('重新抽取完成')
   } catch (e) {
     ElMessage.error(e.message || '重新抽取失败')
+  } finally {
+    starting.value = false
   }
 }
 async function saveField(key, value) {

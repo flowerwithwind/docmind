@@ -24,23 +24,12 @@ def schedule_parse(doc_id: int) -> int:
 
 
 def schedule_extract(doc_id: int, schema_id: int) -> int:
-    """创建抽取任务并后台执行；同文档 + Schema 已有进行中任务时抛 ExtractionError(409)。"""
-    if _has_active_extract(doc_id, schema_id):
+    """原子创建抽取任务并后台执行；同文档 + Schema 已有进行中任务时抛 ExtractionError(409)。"""
+    task_id = db.create_extract_task_if_absent(doc_id, schema_id)
+    if task_id is None:
         raise ExtractionError("该文档正在抽取同一 Schema，请稍后重试", 409)
-    task_id = db.create_task("extract", {"doc_id": doc_id, "schema_id": schema_id})
     _spawn(run_extract(task_id, doc_id, schema_id))
     return task_id
-
-
-def _has_active_extract(doc_id: int, schema_id: int) -> bool:
-    for row in db.list_tasks(kind="extract", limit=100):
-        if row["status"] not in ("pending", "running"):
-            continue
-        payload = db.jloads(row["payload_json"], {})
-        if payload.get("doc_id") == doc_id and payload.get("schema_id") == schema_id:
-            return True
-    return False
-
 
 def _spawn(coro) -> None:
     """在独立守护线程中执行协程，避免阻塞请求线程 / 事件循环。"""
