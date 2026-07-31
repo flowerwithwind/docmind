@@ -8,7 +8,8 @@ import os
 from pathlib import Path
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
-PROJECT_ROOT = BACKEND_DIR.parent
+# 布局自适应：本地为 <repo>/backend（PROJECT_ROOT=<repo>）；容器内若直接拷为 /app 则 PROJECT_ROOT=/app
+PROJECT_ROOT = BACKEND_DIR.parent if BACKEND_DIR.name == "backend" else BACKEND_DIR
 
 # 数据目录（可用环境变量重定向，测试使用）
 DATA_DIR = Path(os.environ.get("DOCMIND_DATA_DIR", PROJECT_ROOT / "data"))

@@ -1,0 +1,17 @@
+.git
+.gitignore
+data
+docs
+logs
+*.db
+*.sqlite3
+backend/.venv
+backend/.ruff_cache
+backend/.pytest_cache
+backend/tests
+frontend/node_modules
+frontend/dist
+**/__pycache__
+**/*.pyc
+.env
+.env.local

@@ -22,7 +22,11 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         if self.limit <= 0:
             return await call_next(request)
         if request.url.path.startswith("/api/"):
-            ip = request.client.host if request.client else "unknown"
+            # 反向代理（Nginx）场景优先取 X-Forwarded-For 首段真实客户端 IP
+            ip = (
+                request.headers.get("x-forwarded-for", "").split(",")[0].strip()
+                or (request.client.host if request.client else "unknown")
+            )
             now = time.monotonic()
             q = self.windows[ip]
             while q and now - q[0] > 60:
