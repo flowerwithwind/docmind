@@ -6,6 +6,7 @@ import time
 
 from app.seed_docs import CONTRACT_V2_PARAGRAPHS
 from app.storage import db
+
 from tests.conftest import upload_and_wait
 from tests.fixtures.documents import make_docx_bytes
 from tests.helpers import schema_id, start_extract, upload_contract

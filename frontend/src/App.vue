@@ -37,7 +37,7 @@ const themeTip = computed(() => '主题：' + meta.value.label + '（点击切�
         </RouterLink>
       </nav>
       <div class="sidebar-foot">
-        <span class="foot-text">v1.0.0 · 求职作品集</span>
+        <span class="foot-text">v1.1.0 · 求职作品集</span>
         <button class="foot-btn btn-collapse" :title="collapsed ? '展开侧边栏' : '收起侧边栏'" @click="collapsed = !collapsed">
           <el-icon :size="15"><Expand v-if="collapsed" /><Fold v-else /></el-icon>
         </button>

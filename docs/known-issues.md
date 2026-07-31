@@ -1,40 +1,41 @@
 # DocMind 已知问题（Known Issues）
 
 > 记录级别：P1 = 必须修复 / P2 = 应修复 / P3 = 可优化
-> 更新于：2026-07-31（v1.0.0）
-
-## P2
-
-### 1. 抽取任务防重非原子，并发双击可能重复调度
-- **位置**：`backend/app/services/tasks.py` `schedule_extract()` → `_has_active_extract()`
-- **现象**：防重采用「先查后插」，两个并发请求可同时通过检查，为同一文档 + Schema 创建两个抽取任务
-- **影响**：重复抽取浪费模型调用，极端情况下结果互相覆盖
-- **建议**：以 doc_id + schema_id 建唯一约束或使用 INSERT ... ON CONFLICT 原子占位；或在前端按钮加 loading 防抖
-
-### 2. 多文件上传中途失败留下已上传文档
-- **位置**：`backend/app/api/documents.py` `upload_documents()`
-- **现象**：第 3 个文件类型不合法时抛 422，前 2 个文件已落库并触发解析
-- **影响**：用户以为上传失败，实际部分文件已入库，造成认知偏差
-- **建议**：先全量校验再入库；或失败时回滚已入库文档并清理文件（try/except + 补偿删除）
-
-### 3. db.py 动态 UPDATE 字段名来自 f-string
-- **位置**：`backend/app/storage/db.py` `update_document` / `update_extraction` / `update_task`
-- **现象**：`f"UPDATE ... SET {keys}"` 由 `**fields` 的键构造
-- **风险评估**：当前所有调用点均为内部白名单传参（如 status/progress/message），无外部输入直达；SQL 注入风险低
-- **建议**：抽一个 `_allowed_update_fields(table, fields)` 白名单过滤函数，防御未来误用
+> 更新于：2026-08-01（v1.1.0）
 
 ## P3
 
-### 4. 前端主 chunk 超过 500KB
-- **位置**：`frontend/vite.config.js`（构建产物 `index-*.js` 约 1.06MB，gzip 349KB）
-- **原因**：Element Plus 全量引入 + DocumentDetailView 相关组件集中
-- **建议**：`manualChunks` 拆分 element-plus / vendor；或 Element Plus 按需导入（unplugin-vue-components）；体积可再降约 50%
+### 1. Element Plus 全量引入，vendor chunk 偏大
+- **位置**：`frontend/src/main.js`（全量 `app.use(ElementPlus)`）
+- **现象**：B5 分包后 `vendor-element-plus-*.js` 原始 816KB / gzip 258KB
+- **影响**：首屏仍需下载约 258KB（gzip），弱网环境首屏偏慢
+- **建议**：按需导入（unplugin-vue-components）或仅注册用到的组件，体积可再降约 50%
 
-### 5. 仓库混合 CRLF / LF 行尾
-- **位置**：仓库根（git autocrlf 未统一，无 .gitattributes）
-- **现象**：git 提示 `LF will be replaced by CRLF`
-- **影响**：跨平台 diff 噪音，Windows / Linux 协作时行尾反复变化
-- **建议**：新增 `.gitattributes` 声明 `*.py text eol=lf`、`*.vue text eol=lf`，并一次性归一化行尾
+### 2. ECharts 全量引入，vendor chunk 偏大
+- **位置**：`frontend/src/views/detail/TableQaTab.vue`（`echarts` 全量 import）
+- **现象**：`vendor-echarts-*.js` 原始 1.1MB / gzip 378KB
+- **影响**：仅表格问答使用图表，却全量加载 ECharts
+- **建议**：按需注册（echarts/core + 用到的图表/组件）或延迟加载，可降至 200KB 以内
+
+### 3. SQLite 单机部署上限
+- **位置**：`backend/app/storage/db.py`（SQLite + 文件目录存储）
+- **现象**：单写者模型 + 文件存储，适合单实例部署
+- **影响**：多实例水平扩展 / 高并发写入受限
+- **建议**：如需多实例部署，迁移 PostgreSQL（SQL 已参数化，改造成本集中在连接层）
+
+### 4. FastAPI TestClient 依赖弃用告警
+- **位置**：`backend/tests/`（`fastapi.testclient`）
+- **现象**：pytest 输出 `StarletteDeprecationWarning: Using httpx with starlette.testclient is deprecated; install httpx2 instead`
+- **影响**：仅为测试期告警，不影响功能
+- **建议**：后续升级依赖时按提示安装 httpx2 消除告警
+
+## 已关闭问题（B4/B5 修复）
+
+- ~~P2 抽取任务防重非原子，并发双击可能重复调度~~ → 已修复（doc_id + schema_id 唯一约束 + INSERT ... ON CONFLICT 原子占位；前端「抽取/重新抽取」按钮 loading 防抖）
+- ~~P2 多文件上传中途失败留下已上传文档~~ → 已修复（先全量校验（格式/大小）再入库，任一文件失败整体失败并补偿删除已入库文档/任务/文件）
+- ~~P2 db.py 动态 UPDATE 字段名来自 f-string~~ → 已修复（新增白名单过滤函数，拒绝未知字段）
+- ~~P3 前端主 chunk 超过 500KB~~ → 已修复（manualChunks 拆 element-plus/echarts 等 vendor：index gzip 349KB → 3.3KB、DocumentDetailView 437KB → 18.1KB）
+- ~~P3 仓库混合 CRLF / LF 行尾~~ → 已修复（.gitattributes 声明源码 eol=lf + git add --renormalize 归一化）
 
 ## 已关闭问题（M8 修复）
 

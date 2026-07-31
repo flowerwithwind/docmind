@@ -2,8 +2,8 @@
 from __future__ import annotations
 
 import pytest
-
 from app.services.parser import OcrUnavailable, ParseError, parse_document
+
 from tests.fixtures.documents import (
     make_docx_bytes,
     make_docx_with_table_bytes,

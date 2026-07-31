@@ -126,3 +126,21 @@
 | vitest run（前端） | 3/3 passed |
 | npm run build | 构建成功（主 chunk 警告见 known-issues） |
 | VERSION / app.version | 均读取为 1.0.0 |
+
+## 六、B1~B5 阶段复盘（v1.1.0）
+
+> 复盘范围：B1 基线 → B5 P3 精选（2026-07-31 ~ 2026-08-01），对照 docs/需求开发文档.md §9 里程碑与 known-issues 的演变。
+
+| 阶段 | 关键提交 | 架构决策 | 风险 | 教训 |
+|---|---|---|---|---|
+| B1 基线 | 590e12c ~ 542b3a5（M1~M8）、209fc39（S0 环境基线） | 以 M1~M8 既有实现为基线固化：FastAPI 分层（api/services/storage）、SQLite WAL + 外键、Vue3 懒加载路由；版本统一读取 VERSION 文件 | 基线测试集中于 API 集成层，服务层边界用例偏少 | 回归先行：任何里程碑改动前先跑全量 pytest / ruff / vitest / build，锁定基线再动手 |
+| B2 表格问答后端 | 37c2acd | Excel/PDF 表格转可查询数据（table_store 存储层）+ NL2SQL 链路 + SQL 白名单校验（validate_sql / ensure_limit），无 Key 降级规则问答 | 自然语言 → SQL 引入新的注入面 | SQL 仅允许 SELECT + 表/列白名单 + 行数上限钳制；LLM 输出全部 mock 化，测试 hermetic，不依赖网络/Key |
+| B3 表格问答前端 | 74b56fc | 详情页新增「表格问答」Tab：文档表格选择 + NL2SQL 结果面板 + ECharts 图表/降级标识/错误态 | 主 chunk 进一步膨胀 | 功能按 Tab 懒加载隔离；体积问题如实记入 known-issues（P3），交由 B5 统一处理 |
+| B4 P2 修复 | dc0650e / 82a74e2 / 109ee9d | 抽取防重原子化（doc_id + schema_id 唯一约束 + ON CONFLICT 原子占位）；多文件上传先全量校验再入库 + 失败补偿删除；db.py 动态 UPDATE 白名单过滤；前端抽取按钮 loading 防抖 | 并发双击重复建任务；上传第 N 个失败残留部分文件；f-string 拼接 SQL 字段名 | 先写失败用例再修（并发线程、残留断言、未知字段拒绝），修复后新增 11 项测试（pytest 161）；前端防抖与后端原子占位双保险 |
+| B5 P3 精选 | 4ce1354 | vite manualChunks 将 element-plus / echarts 等拆为独立 vendor chunk；新增 .gitattributes（源码 eol=lf）+ git add --renormalize 一次性归一化行尾 | index 349KB / DocumentDetailView 437KB（gzip）主 chunk 过大；仓库 CRLF/LF 混合 | 以构建产物 gzip 实测验收（主 chunk 降至 3.3KB / 18.1KB）；行尾归一化仅限 .gitattributes 覆盖的源码模式，diff 无噪音 |
+
+### 复盘要点
+
+- **架构决策**：SQLite + 文件目录双存储、SSE 流式问答、无 Key 降级规则引擎、人机校验闭环是项目四大核心决策；B1~B5 均在不推翻既有架构的前提下增量演进（新增 table_store 存储层，复用 db 层加唯一约束与白名单过滤）。
+- **主要风险**：① SQL 注入面扩大（NL2SQL 新链路）→ 白名单 + 行数钳制闭环；② 并发与部分失败一致性（任务防重、批量上传）→ 原子占位 + 补偿删除；③ 前端体积与工程卫生 → manualChunks 分包 + 行尾规范。
+- **教训**：① 防重必须落在数据库约束层，业务层「先查后插」不可靠；② 批量操作要么全成要么全败，补偿逻辑要可测试（断言文档/任务/文件零残留）；③ 动态 SQL 字段一律白名单过滤，防御未来误用；④ 性能优化以构建产物实测为准，不凭直觉；⑤ 行尾归一化必须用 .gitattributes 声明范围，避免大规模无关 diff。

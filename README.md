@@ -2,6 +2,8 @@
 
 ![CI](https://github.com/flowerwithwind/docmind/actions/workflows/ci.yml/badge.svg)
 
+![版本](https://img.shields.io/badge/version-v1.1.0-blue)
+
 把合同、财报、扫描件变成「能问、能抽、能改、能导出」的智能文档——以**人机校验闭环**为核心差异的多模态文档智能助手。
 
 > 求职作品集主项目（AI 应用开发工程师）· 需求与验收文档见 [docs/需求开发文档.md](docs/需求开发文档.md)
@@ -19,25 +21,27 @@
 | 结构化抽取 | Schema 驱动字段抽取 + JSON 校验 + 字段级置信度，抽取结果可视化编辑 |
 | 人机校验闭环 | 浏览器修正 → 确认快照 → 修正样本回流，持续改善抽取质量 |
 | 多文档对比 | 同 Schema 字段级 diff + 章节相似度，支持报告导出 |
+| 表格问答 | Excel / PDF 表格转可查询数据，自然语言问数（NL2SQL + SQL 白名单校验），ECharts 图表展示 |
 | 无 Key 可演示 | 规则抽取器 / 规则问答器降级，内置合同、财报样例，开箱即用 |
 
 ## 技术架构
 
 ```
-浏览器 (Vue 3 + Vite + Element Plus + Marked/DOMPurify)
+浏览器 (Vue 3 + Vite + Element Plus + ECharts + Marked/DOMPurify)
    │  REST / SSE 流式
    ▼
-FastAPI 应用层（文档 / 任务 / 会话 / 抽取 / 对比 / 样例 / 设置 / 演示）
+FastAPI 应用层（文档 / 任务 / 会话 / 抽取 / 对比 / 表格问答 / 样例 / 设置 / 演示）
    │
    ├─ 解析层：pdfplumber · python-docx · openpyxl · PaddleOCR(可选)
    ├─ 检索层：BM25 + 稀疏/稠密向量 + RRF 融合
    ├─ LLM 适配层：OpenAI 兼容协议（DeepSeek 等），无 Key 自动降级规则引擎
+   ├─ 表格问答层：Excel/PDF 表格入库 + NL2SQL + SQL 白名单校验
    ├─ 抽取层：Schema 校验 + LLM 分批抽取 + 规则抽取器 + 置信度评估
    └─ 存储：SQLite（元数据）+ 文件目录（原件/图片/导出物）
 部署：Docker Compose（Nginx 同源反代 /api + SSE 透传）· GitHub Actions CI
 ```
 
-技术栈：Python 3.11 · FastAPI · SQLite · Vue 3 · Vite · Element Plus · Marked/DOMPurify · Docker · GitHub Actions
+技术栈：Python 3.11 · FastAPI · SQLite · Vue 3 · Vite · Element Plus · ECharts · Marked/DOMPurify · Docker · GitHub Actions
 
 ## 快速开始
 
@@ -89,25 +93,26 @@ backend/
     fallback/   规则抽取器 / 规则问答器
     storage/    SQLite 与文件存储
     utils/      限流 / 日志 / 文本工具
-  tests/        105 项 pytest（API / 解析 / 分块 / 检索 / 问答 / 抽取 / 对比）
+  tests/        161 项 pytest（API / 解析 / 分块 / 检索 / 问答 / 抽取 / 对比 / 表格问答）
 frontend/
   src/
     views/      工作台 / 文档库 / 详情四页签 / Schema / 样本库 / 设置
-    components/ 16 个业务组件（骨架屏/空态/错误态/状态徽标/置信度条…）
+    components/ 18 个业务组件（骨架屏/空态/错误态/状态徽标/置信度条…）
     composables/useTheme.js  主题（跟随系统/浅色/深色）
     styles/     main.css 设计令牌（§8.2）
 docs/
   需求开发文档.md      需求 v2.0（功能验收 + 里程碑）
   design-walkthrough.md  M6 设计走查清单（§8.8 前端验收）
   code-review.md        M8 代码审查报告
+  known-issues.md       已知问题与修复记录（B4/B5 已关闭项）
 ```
 
 ## 质量保障
 
-- 后端：105 项 pytest 全绿，ruff 零告警
-- 前端：Vite 构建 + vitest 单测，§8.8 设计走查（暗色模式 / 响应式 / 状态完备）逐项验收
+- 后端：161 项 pytest 全绿（解析 / 问答 / 抽取 / 对比 / 表格问答 / 一致性回归），ruff 零告警
+- 前端：Vite 构建 + vitest 18 项单测，§8.8 设计走查（暗色模式 / 响应式 / 状态完备）逐项验收
 - CI：GitHub Actions 自动执行 pytest → ruff → 前端构建/测试 → Docker 镜像构建
 
 ## 里程碑
 
-M1 骨架 → M2 解析层 → M3 问答层 → M4 抽取校验 → M5 对比演示 → M6 前端美观 → M7 部署工程化 → M8 质量门禁（详见 [docs/需求开发文档.md](docs/需求开发文档.md) §9）
+M1 骨架 → M2 解析层 → M3 问答层 → M4 抽取校验 → M5 对比演示 → M6 前端美观 → M7 部署工程化 → M8 质量门禁 → B1~B6（v1.1.0 发布，详见 [docs/需求开发文档.md](docs/需求开发文档.md) §9）
