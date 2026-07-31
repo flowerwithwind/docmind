@@ -44,9 +44,9 @@ const html = computed(() => DOMPurify.sanitize(marked.parse(props.content || '',
 .markdown :deep(h1) { font-size: 18px; } .markdown :deep(h2) { font-size: 16px; } .markdown :deep(h3) { font-size: 15px; }
 .markdown :deep(table) { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 13px; }
 .markdown :deep(th), .markdown :deep(td) { border: 1px solid var(--dm-border); padding: 6px 10px; text-align: left; }
-.markdown :deep(th) { background: #f8fafc; font-weight: 600; }
-.markdown :deep(code:not(.hljs)) { background: #f1f5f9; padding: 1px 5px; border-radius: 4px; font-size: 12.5px; }
-.markdown :deep(pre) { background: #0f172a; color: #e2e8f0; padding: 12px 14px; border-radius: 10px; overflow-x: auto; font-size: 12.5px; }
+.markdown :deep(th) { background: var(--dm-fill); font-weight: 600; }
+.markdown :deep(code:not(.hljs)) { background: var(--dm-fill-strong); padding: 1px 5px; border-radius: 4px; font-size: 12.5px; }
+.markdown :deep(pre) { background: var(--dm-code-bg); color: var(--dm-code-text); padding: 12px 14px; border-radius: 10px; overflow-x: auto; font-size: 12.5px; }
 .markdown :deep(ul), .markdown :deep(ol) { padding-left: 20px; margin: 8px 0; }
-.markdown :deep(blockquote) { border-left: 3px solid var(--dm-primary); margin: 10px 0; padding: 4px 12px; color: var(--dm-text-muted); background: #f8fafc; }
+.markdown :deep(blockquote) { border-left: 3px solid var(--dm-primary); margin: 10px 0; padding: 4px 12px; color: var(--dm-text-muted); background: var(--dm-fill); }
 </style>

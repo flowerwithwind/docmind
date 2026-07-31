@@ -41,7 +41,7 @@ const highlighted = computed(() => {
 .path { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--dm-text); font-weight: 600; }
 .path-text { flex: 1; }
 .page { font-size: 11px; background: var(--dm-primary-light); color: var(--dm-primary); padding: 2px 8px; border-radius: 999px; font-variant-numeric: tabular-nums; }
-.block pre { margin: 0; background: #f8fafc; border: 1px solid var(--dm-border); border-radius: 10px; padding: 14px; font-family: inherit; font-size: 13px; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
-.block mark { background: #fde68a; color: inherit; padding: 0 2px; border-radius: 3px; }
+.block pre { margin: 0; background: var(--dm-fill); border: 1px solid var(--dm-border); border-radius: 10px; padding: 14px; font-family: inherit; font-size: 13px; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
+.block mark { background: var(--dm-mark-bg); color: var(--dm-mark-text); padding: 0 2px; border-radius: 3px; }
 .muted { color: var(--dm-text-muted); font-size: 13px; padding: 12px 0; }
 </style>

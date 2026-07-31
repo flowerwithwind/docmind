@@ -10,7 +10,7 @@
 <script setup>
 import { computed } from 'vue'
 const props = defineProps({ icon: { type: [Object, String], required: true }, label: String, value: [Number, String], tone: { type: String, default: 'primary' } })
-const tones = { primary: 'rgba(31,111,235,.12)', teal: 'rgba(14,116,144,.12)', green: 'rgba(22,163,74,.12)', orange: 'rgba(217,119,6,.12)', purple: 'rgba(124,58,237,.12)' }
+const tones = { primary: 'var(--dm-tint-primary)', teal: 'var(--dm-tint-teal)', green: 'var(--dm-tint-green)', orange: 'var(--dm-tint-orange)', purple: 'var(--dm-tint-purple)' }
 const iconBg = computed(() => tones[props.tone] || tones.primary)
 </script>
 <style scoped>

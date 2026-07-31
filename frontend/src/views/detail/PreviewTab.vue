@@ -88,8 +88,15 @@ async function reparse() {
 .spacer { flex: 1; }
 .split { display: flex; gap: 16px; align-items: flex-start; }
 .tree-panel { width: 260px; flex-shrink: 0; background: var(--dm-card); border: 1px solid var(--dm-border); border-radius: var(--dm-radius); padding: 12px; position: sticky; top: 16px; max-height: calc(100vh - 140px); overflow-y: auto; }
-.panel-title { font-size: 13px; font-weight: 600; color: var(--dm-text); padding: 4px 8px 10px; border-bottom: 1px solid #f1f5f9; margin-bottom: 8px; }
+.panel-title { font-size: 13px; font-weight: 600; color: var(--dm-text); padding: 4px 8px 10px; border-bottom: 1px solid var(--dm-fill-strong); margin-bottom: 8px; }
 .chunks-panel { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
 .page-sep { display: flex; align-items: center; gap: 10px; margin: 6px 0 2px; font-size: 12px; font-weight: 600; color: var(--dm-primary); }
-.page-sep::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, #dbe7f7, transparent); }
+.page-sep::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--dm-sep-gradient), transparent); }
+@media (max-width: 1280px) {
+  .split { flex-direction: column; }
+  .tree-panel { width: 100%; position: static; max-height: 260px; }
+}
+@media (max-width: 768px) {
+  .stats-row { flex-wrap: wrap; }
+}
 </style>

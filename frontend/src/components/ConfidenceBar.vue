@@ -12,7 +12,7 @@ const level = computed(() => (props.value >= 0.8 ? 'high' : props.value >= 0.5 ?
 </script>
 <style scoped>
 .conf { display: inline-flex; align-items: center; gap: 8px; min-width: 96px; }
-.track { width: 64px; height: 6px; border-radius: 3px; background: #e8edf3; overflow: hidden; }
+.track { width: 64px; height: 6px; border-radius: 3px; background: var(--dm-track); overflow: hidden; }
 .fill { height: 100%; border-radius: 3px; transition: width .3s ease; }
 .fill.high { background: var(--dm-success); }
 .fill.mid { background: var(--dm-warning); }

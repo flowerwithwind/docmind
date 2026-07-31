@@ -289,7 +289,7 @@ onMounted(load)
 <style scoped>
 .head-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; }
 .block { margin-bottom: 28px; }
-.block-title { display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 700; color: var(--dm-navy); margin-bottom: 12px; }
+.block-title { display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 700; color: var(--dm-heading); margin-bottom: 12px; }
 .block-sub { font-size: 12px; font-weight: 400; color: var(--dm-text-muted); }
 .builtin-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
 .builtin-card { background: var(--dm-card); border: 1px solid var(--dm-border); border-radius: var(--dm-radius); box-shadow: var(--dm-shadow); padding: 16px 18px; transition: box-shadow .15s, transform .15s; }
@@ -298,25 +298,25 @@ onMounted(load)
 .bc-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--dm-primary-light); color: var(--dm-primary); display: flex; align-items: center; justify-content: center; }
 .bc-info { flex: 1; min-width: 0; }
 .bc-name { font-size: 14.5px; font-weight: 700; color: var(--dm-text); }
-.bc-key { font-size: 11px; color: #9fb3c8; font-variant-numeric: tabular-nums; }
+.bc-key { font-size: 11px; color: var(--dm-text-faint); font-variant-numeric: tabular-nums; }
 .bc-desc { font-size: 12.5px; color: var(--dm-text-muted); line-height: 1.6; margin: 12px 0; min-height: 38px; }
-.bc-foot { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #f1f5f9; padding-top: 10px; }
+.bc-foot { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--dm-fill-strong); padding-top: 10px; }
 .bc-count { font-size: 12px; color: var(--dm-text-muted); font-variant-numeric: tabular-nums; }
 .table-card { padding: 8px 12px 12px; }
 .c-name { font-size: 13.5px; font-weight: 600; color: var(--dm-text); }
-.c-key { font-size: 11px; color: #9fb3c8; font-variant-numeric: tabular-nums; }
+.c-key { font-size: 11px; color: var(--dm-text-faint); font-variant-numeric: tabular-nums; }
 .row-ops { display: flex; justify-content: flex-end; }
 .mono { font-variant-numeric: tabular-nums; }
-.muted { color: #b6c2d2; }
+.muted { color: var(--dm-text-faint); }
 .req { color: var(--dm-danger); }
-.form-error { display: flex; align-items: center; gap: 8px; background: #fdecec; border: 1px solid #f3c1c1; color: var(--dm-danger); font-size: 12.5px; padding: 9px 12px; border-radius: 8px; margin-bottom: 14px; }
+.form-error { display: flex; align-items: center; gap: 8px; background: var(--dm-danger-bg); border: 1px solid var(--dm-danger-border); color: var(--dm-danger); font-size: 12.5px; padding: 9px 12px; border-radius: 8px; margin-bottom: 14px; }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px; margin-bottom: 16px; }
 .form-item { display: flex; flex-direction: column; gap: 6px; }
 .form-item.full { grid-column: 1 / -1; }
 .form-item label { font-size: 12.5px; font-weight: 600; color: var(--dm-text); }
 .hint { font-size: 11px; color: var(--dm-text-muted); line-height: 1.5; }
 .fields-head { display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: 600; color: var(--dm-text); margin: 4px 0 10px; }
-.fields-empty { padding: 24px; text-align: center; color: #b6c2d2; font-size: 12.5px; border: 1px dashed var(--dm-border); border-radius: 10px; }
+.fields-empty { padding: 24px; text-align: center; color: var(--dm-text-faint); font-size: 12.5px; border: 1px dashed var(--dm-border); border-radius: 10px; }
 .field-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
 .field-row :deep(.el-input__wrapper), .field-row :deep(.el-select__wrapper) { border-radius: 8px; }
 .f-key { width: 130px; }
@@ -327,4 +327,12 @@ onMounted(load)
 .f-desc { flex: 1.2; min-width: 140px; }
 .field-row :deep(.el-input.invalid .el-input__wrapper) { box-shadow: 0 0 0 1px var(--dm-danger) inset; }
 .json-area :deep(textarea) { font-family: 'JetBrains Mono', Consolas, monospace; font-size: 12.5px; line-height: 1.6; }
+@media (max-width: 1280px) {
+  .builtin-grid { grid-template-columns: 1fr; }
+  .form-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .field-row { flex-wrap: wrap; }
+  .f-key, .f-label, .f-type { width: 100%; }
+}
 </style>

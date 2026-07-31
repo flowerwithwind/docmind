@@ -22,10 +22,10 @@ const label = computed(() => meta.value.label)
 .status-badge { display: inline-flex; align-items: center; gap: 6px; height: 22px; padding: 0 10px; border-radius: 999px; font-size: 12px; line-height: 1; white-space: nowrap; }
 .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 .dot.spin { animation: dm-spin 1s linear infinite; }
-.status-badge.info { background: #eef2f7; color: #475569; }
-.status-badge.success { background: #e8f7ee; color: var(--dm-success); }
-.status-badge.warning { background: #fdf3e3; color: var(--dm-warning); }
-.status-badge.danger { background: #fdecec; color: var(--dm-danger); }
+.status-badge.info { background: var(--dm-fill-strong); color: var(--dm-text-muted); }
+.status-badge.success { background: var(--dm-success-bg); color: var(--dm-success); }
+.status-badge.warning { background: var(--dm-warning-bg); color: var(--dm-warning); }
+.status-badge.danger { background: var(--dm-danger-bg); color: var(--dm-danger); }
 .status-badge.primary { background: var(--dm-primary-light); color: var(--dm-primary); }
 @keyframes dm-spin { to { transform: rotate(360deg); } }
 </style>

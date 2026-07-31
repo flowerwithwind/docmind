@@ -102,11 +102,15 @@ onMounted(load)
 <style scoped>
 .head-row { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
 .doc-info { min-width: 0; }
-.doc-name { font-size: 17px; font-weight: 700; color: var(--dm-navy); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.doc-name { font-size: 17px; font-weight: 700; color: var(--dm-heading); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .doc-meta { font-size: 12px; color: var(--dm-text-muted); margin-top: 3px; font-variant-numeric: tabular-nums; }
 .spacer { flex: 1; }
 .detail-tabs :deep(.el-tabs__nav-wrap::after) { height: 1px; background: var(--dm-border); }
 .detail-tabs :deep(.el-tabs__item) { font-size: 14px; }
 .detail-tabs :deep(.el-tabs__item.is-active) { color: var(--dm-primary); font-weight: 600; }
 .detail-tabs :deep(.el-tabs__active-bar) { background: var(--dm-primary); height: 2.5px; }
+@media (max-width: 1280px) {
+  .head-row { flex-wrap: wrap; }
+  .doc-name { font-size: 15px; }
+}
 </style>

@@ -44,13 +44,13 @@ defineExpose({ toggle })
 <style scoped>
 .tree { font-size: 13px; }
 .node { display: flex; align-items: center; gap: 6px; padding: 7px 10px; border-radius: 8px; cursor: pointer; color: var(--dm-text); border-left: 3px solid transparent; }
-.node:hover { background: #f8fafc; }
+.node:hover { background: var(--dm-fill); }
 .node.active { background: var(--dm-primary-light); color: var(--dm-primary); border-left-color: var(--dm-primary); font-weight: 600; }
 .chevron { transition: transform .15s ease; color: var(--dm-text-muted); flex-shrink: 0; }
 .chevron.open { transform: rotate(90deg); }
-.leaf-dot { width: 5px; height: 5px; border-radius: 50%; background: #cbd5e1; flex-shrink: 0; margin-left: 3px; }
+.leaf-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--dm-border-strong); flex-shrink: 0; margin-left: 3px; }
 .title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.count { font-size: 10px; background: #eef2f7; color: var(--dm-text-muted); border-radius: 999px; padding: 1px 6px; font-variant-numeric: tabular-nums; }
+.count { font-size: 10px; background: var(--dm-fill-strong); color: var(--dm-text-muted); border-radius: 999px; padding: 1px 6px; font-variant-numeric: tabular-nums; }
 .page { font-size: 10px; color: var(--dm-primary); font-variant-numeric: tabular-nums; }
 .tree-empty { padding: 20px 12px; color: var(--dm-text-muted); font-size: 12px; text-align: center; }
 </style>

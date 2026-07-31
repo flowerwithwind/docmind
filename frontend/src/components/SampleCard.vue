@@ -21,11 +21,11 @@ const tone = computed(() => (props.sample.kind === 'financial' ? 'teal' : props.
 <style scoped>
 .sample-card { display: flex; align-items: center; gap: 16px; padding: 18px 20px; background: var(--dm-card); border: 1px solid var(--dm-border); border-radius: var(--dm-radius); box-shadow: var(--dm-shadow); transition: box-shadow .15s ease, transform .15s ease; }
 .sample-card:hover { box-shadow: var(--dm-shadow-lg); transform: translateY(-1px); }
-.sample-card.loaded { border-color: #bfe3cc; }
+.sample-card.loaded { border-color: var(--dm-success-border); }
 .icon-box { width: 56px; height: 56px; border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.icon-box.blue { background: rgba(31,111,235,.12); color: var(--dm-primary); }
-.icon-box.teal { background: rgba(14,116,144,.12); color: var(--dm-teal); }
-.icon-box.orange { background: rgba(217,119,6,.12); color: var(--dm-warning); }
+.icon-box.blue { background: var(--dm-tint-primary); color: var(--dm-primary); }
+.icon-box.teal { background: var(--dm-tint-teal); color: var(--dm-teal); }
+.icon-box.orange { background: var(--dm-tint-orange); color: var(--dm-warning); }
 .info { flex: 1; min-width: 0; }
 .name { font-size: 15px; font-weight: 600; color: var(--dm-text); margin-bottom: 4px; }
 .hint { font-size: 12px; color: var(--dm-text-muted); line-height: 1.5; }

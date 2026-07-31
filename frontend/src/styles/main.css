@@ -1,25 +1,141 @@
+/* ============================================================
+   DocMind 设计令牌（§8.2）
+   - 所有组件一律使用令牌色，禁止硬编码色值（渐变/特殊图形除外）
+   - 暗色模式：html.dark 时整体切换令牌；Element Plus 暗色变量同步
+   ============================================================ */
 :root {
-  /* 设计令牌：色彩 */
+  /* 品牌色 */
   --dm-primary: #1f6feb;
-  --dm-primary-dark: #1447a6;
-  --dm-primary-light: #e8f0fe;
+  --dm-primary-hover: #1a5fd0;
+  --dm-primary-light: #eaf1fe;
+  --dm-accent: #0e7490;
   --dm-teal: #0e7490;
+  --dm-dark: #102a43;
   --dm-navy: #102a43;
+  --dm-hero-mid: #14385c;
+  --dm-heading: #102a43;
+
+  /* 中性色（浅色主题） */
   --dm-bg: #f6f8fb;
   --dm-card: #ffffff;
+  --dm-fill: #f8fafc;
+  --dm-fill-strong: #eef2f7;
   --dm-border: #e2e8f0;
+  --dm-border-strong: #cbd5e1;
   --dm-text: #1e293b;
   --dm-text-muted: #64748b;
+  --dm-text-secondary: #64748b;
+  --dm-neutral: #64748b;
+  --dm-text-faint: #9fb3c8;
+  --dm-text-disabled: #94a3b8;
+
+  /* 语义色 + 浅底 */
   --dm-success: #16a34a;
+  --dm-success-bg: #e8f7ee;
+  --dm-success-border: #bfe3cc;
   --dm-warning: #d97706;
+  --dm-warning-bg: #fdf3e3;
+  --dm-warning-border: #f3d9a8;
   --dm-danger: #dc2626;
-  /* 设计令牌：几何 */
+  --dm-danger-bg: #fdecec;
+  --dm-danger-border: #f3c1c1;
+  --dm-info-bg: #e8f4f8;
+  --dm-info-border: #cde9f2;
+
+  /* 强调浅底（图标容器等） */
+  --dm-tint-primary: rgba(31, 111, 235, .12);
+  --dm-tint-teal: rgba(14, 116, 144, .12);
+  --dm-tint-green: rgba(22, 163, 74, .12);
+  --dm-tint-orange: rgba(217, 119, 6, .12);
+  --dm-tint-purple: rgba(124, 58, 237, .12);
+
+  /* 交互反馈 */
+  --dm-ring-primary: rgba(31, 111, 235, .15);
+  --dm-primary-soft: #d7e5fb;
+
+  /* 深色导航 / Hero 上的浅色文字 */
+  --dm-on-dark: #ffffff;
+  --dm-on-dark-muted: rgba(255, 255, 255, .72);
+  --dm-on-dark-faint: rgba(255, 255, 255, .55);
+  --dm-on-dark-weak: rgba(255, 255, 255, .4);
+  --dm-on-dark-soft: rgba(255, 255, 255, .75);
+  --dm-on-dark-hover: rgba(255, 255, 255, .08);
+  --dm-on-dark-ghost: rgba(255, 255, 255, .1);
+  --dm-on-dark-border: rgba(255, 255, 255, .2);
+  --dm-on-dark-border-strong: rgba(255, 255, 255, .5);
+
+  /* 代码块 / 引用高亮 */
+  --dm-code-bg: #0f172a;
+  --dm-code-text: #e2e8f0;
+  --dm-mark-bg: #fde68a;
+  --dm-mark-text: inherit;
+
+  /* 骨架屏 / 进度轨道 / 滚动条 */
+  --dm-skeleton-a: #e2e8f0;
+  --dm-skeleton-b: #eef2f7;
+  --dm-track: #e8edf3;
+  --dm-scrollbar: #cbd5e1;
+  --dm-scrollbar-hover: #94a3b8;
+  --dm-sep-gradient: #dbe7f7;
+
+  /* 几何 */
   --dm-radius: 12px;
   --dm-radius-sm: 8px;
-  --dm-shadow: 0 1px 2px rgba(16, 42, 67, 0.06), 0 4px 12px rgba(16, 42, 67, 0.08);
-  --dm-shadow-lg: 0 8px 24px rgba(16, 42, 67, 0.12);
+  --dm-shadow: 0 1px 2px rgba(16, 42, 67, .06), 0 4px 12px rgba(16, 42, 67, .08);
+  --dm-shadow-lg: 0 8px 24px rgba(16, 42, 67, .12);
+
   /* 字体 */
-  --dm-font: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+  --dm-font: -apple-system, 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', Inter, Roboto, sans-serif;
+}
+
+/* ============ 暗色主题（手动或跟随系统） ============ */
+html.dark {
+  --dm-bg: #0f172a;
+  --dm-card: #1e293b;
+  --dm-fill: #263449;
+  --dm-fill-strong: #2d3b52;
+  --dm-border: #334155;
+  --dm-border-strong: #47566f;
+  --dm-text: #e2e8f0;
+  --dm-text-muted: #94a3b8;
+  --dm-text-secondary: #94a3b8;
+  --dm-neutral: #94a3b8;
+  --dm-text-faint: #64748b;
+  --dm-text-disabled: #64748b;
+  --dm-heading: #e2e8f0;
+
+  --dm-primary-hover: #3b82f6;
+  --dm-primary-light: rgba(59, 130, 246, .16);
+  --dm-primary-soft: rgba(59, 130, 246, .26);
+
+  --dm-success-bg: rgba(22, 163, 74, .16);
+  --dm-success-border: rgba(22, 163, 74, .35);
+  --dm-warning-bg: rgba(217, 119, 6, .16);
+  --dm-warning-border: rgba(217, 119, 6, .35);
+  --dm-danger-bg: rgba(220, 38, 38, .16);
+  --dm-danger-border: rgba(220, 38, 38, .4);
+  --dm-info-bg: rgba(14, 116, 144, .16);
+  --dm-info-border: rgba(14, 116, 144, .35);
+
+  --dm-tint-primary: rgba(59, 130, 246, .18);
+  --dm-tint-teal: rgba(14, 165, 186, .16);
+  --dm-tint-green: rgba(34, 197, 94, .16);
+  --dm-tint-orange: rgba(251, 146, 60, .16);
+  --dm-tint-purple: rgba(167, 139, 250, .16);
+
+  --dm-ring-primary: rgba(59, 130, 246, .35);
+  --dm-mark-bg: #f59e0b;
+  --dm-mark-text: #1e293b;
+
+  --dm-skeleton-a: #334155;
+  --dm-skeleton-b: #3d4b63;
+  --dm-track: #2d3b52;
+  --dm-scrollbar: #47566f;
+  --dm-scrollbar-hover: #64748b;
+  --dm-sep-gradient: rgba(59, 130, 246, .3);
+
+  --dm-shadow: 0 1px 2px rgba(0, 0, 0, .35), 0 4px 12px rgba(0, 0, 0, .28);
+  --dm-shadow-lg: 0 8px 24px rgba(0, 0, 0, .42);
 }
 
 * { box-sizing: border-box; }
@@ -29,17 +145,43 @@ body {
   background: var(--dm-bg);
   color: var(--dm-text);
   -webkit-font-smoothing: antialiased;
+  transition: background-color .2s ease, color .2s ease;
 }
 a { color: var(--dm-primary); text-decoration: none; }
 
-/* Element Plus 主题微调 */
+/* 自定义细滚动条（§8.7-7） */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: var(--dm-scrollbar); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--dm-scrollbar-hover); }
+::-webkit-scrollbar-track { background: transparent; }
+
+/* Element Plus 主题微调（§8.2 圆角/边框） */
 .el-card { border-radius: var(--dm-radius); border-color: var(--dm-border); }
 .el-button { border-radius: var(--dm-radius-sm); }
-.el-input__wrapper, .el-textarea__inner { border-radius: var(--dm-radius-sm); }
+.el-input__wrapper, .el-textarea__inner, .el-select__wrapper { border-radius: var(--dm-radius-sm); }
+.el-dialog, .el-drawer { border-radius: 16px; }
+.el-table {
+  --el-table-header-bg-color: var(--dm-fill-strong);
+  --el-table-header-text-color: var(--dm-text-muted);
+  --el-table-border-color: var(--dm-border);
+}
+.el-table__row:hover > td { background: var(--dm-fill) !important; }
 
-/* 通用页面容器 */
+/* 通用页面容器（§8.1 内容区最大 1440px 居中） */
 .page { padding: 24px 32px; max-width: 1440px; margin: 0 auto; }
-.page-title { font-size: 22px; font-weight: 700; color: var(--dm-navy); margin: 0 0 4px; }
+.page-title { font-size: 22px; font-weight: 700; color: var(--dm-heading); margin: 0 0 4px; }
 .page-sub { color: var(--dm-text-muted); font-size: 13px; margin: 0 0 20px; }
 .card { background: var(--dm-card); border: 1px solid var(--dm-border); border-radius: var(--dm-radius); box-shadow: var(--dm-shadow); }
 .card-pad { padding: 20px 24px; }
+
+/* 路由过渡（§8.7-1） */
+.fade-enter-active, .fade-leave-active { transition: opacity .15s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
+
+/* 响应式基础 */
+@media (max-width: 1280px) {
+  .page { padding: 20px; }
+}
+@media (max-width: 768px) {
+  .page { padding: 16px; }
+}

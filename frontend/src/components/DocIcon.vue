@@ -27,7 +27,7 @@ const extText = computed(() => (props.ext || '').replace('.', '').toUpperCase().
 const iconSize = computed(() => (props.size === 'lg' ? 26 : 18))
 </script>
 <style scoped>
-.doc-icon { position: relative; display: inline-flex; align-items: center; justify-content: center; border-radius: 10px; color: #fff; font-weight: 700; }
+.doc-icon { position: relative; display: inline-flex; align-items: center; justify-content: center; border-radius: 10px; color: var(--dm-on-dark); font-weight: 700; }
 .doc-icon.md { width: 44px; height: 44px; }
 .doc-icon.lg { width: 56px; height: 56px; border-radius: 12px; }
 .ext { position: absolute; bottom: 3px; right: 5px; font-size: 8px; letter-spacing: .2px; opacity: .92; }

@@ -38,12 +38,12 @@ function text(v) {
 </script>
 <style scoped>
 .f-label { font-weight: 600; color: var(--dm-text); font-size: 13px; }
-.f-key { font-size: 11px; color: #9fb3c8; font-variant-numeric: tabular-nums; }
+.f-key { font-size: 11px; color: var(--dm-text-faint); font-variant-numeric: tabular-nums; }
 .val { font-size: 13px; color: var(--dm-text); word-break: break-all; }
-.val.missing { color: #b6c2d2; }
+.val.missing { color: var(--dm-text-faint); }
 .delta { font-variant-numeric: tabular-nums; font-weight: 600; font-size: 12.5px; }
 .delta.up { color: var(--dm-danger); }
 .delta.down { color: var(--dm-success); }
-.delta-none { color: #b6c2d2; }
-.compare-table :deep(.el-table__row:hover td) { background: #f8fafc; }
+.delta-none { color: var(--dm-text-faint); }
+.compare-table :deep(.el-table__row:hover td) { background: var(--dm-fill); }
 </style>

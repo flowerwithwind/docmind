@@ -158,10 +158,14 @@ onMounted(() => { loadSchemas(); load(1) })
 .table-card { padding: 8px 12px 12px; }
 .doc-name { font-size: 13px; font-weight: 600; color: var(--dm-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
 .f-label { font-size: 13px; color: var(--dm-text); font-weight: 600; }
-.f-key { font-size: 11px; color: #9fb3c8; font-variant-numeric: tabular-nums; }
+.f-key { font-size: 11px; color: var(--dm-text-faint); font-variant-numeric: tabular-nums; }
 .model-val { color: var(--dm-warning); font-size: 12.5px; word-break: break-all; }
 .human-val { color: var(--dm-success); font-size: 12.5px; font-weight: 600; word-break: break-all; }
 .cite { display: block; font-size: 12px; color: var(--dm-text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .mono { font-variant-numeric: tabular-nums; font-size: 12px; color: var(--dm-text-muted); }
 .pager { display: flex; justify-content: flex-end; padding: 14px 4px 2px; }
+@media (max-width: 1280px) {
+  .toolbar { flex-wrap: wrap; }
+  .search { width: 100%; }
+}
 </style>

@@ -238,13 +238,13 @@ onMounted(load)
 .head-row { margin-bottom: 16px; }
 .cap-row { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
 .cap-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 999px; font-size: 12.5px; border: 1px solid var(--dm-border); background: var(--dm-card); color: var(--dm-text-muted); }
-.cap-chip.ok { color: var(--dm-success); border-color: #bfe3cc; background: #e8f7ee; }
+.cap-chip.ok { color: var(--dm-success); border-color: var(--dm-success-border); background: var(--dm-success-bg); }
 .block { padding: 20px 24px; margin-bottom: 18px; }
 .card-title { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
 .ct-icon { width: 42px; height: 42px; border-radius: 11px; display: flex; align-items: center; justify-content: center; }
 .ct-icon.blue { background: var(--dm-primary-light); color: var(--dm-primary); }
-.ct-icon.teal { background: rgba(14,116,144,.1); color: var(--dm-teal); }
-.ct-icon.red { background: #fdecec; color: var(--dm-danger); }
+.ct-icon.teal { background: var(--dm-tint-teal); color: var(--dm-teal); }
+.ct-icon.red { background: var(--dm-danger-bg); color: var(--dm-danger); }
 .ct-name { font-size: 15px; font-weight: 700; color: var(--dm-text); }
 .ct-sub { font-size: 12px; color: var(--dm-text-muted); margin-top: 2px; }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 20px; max-width: 860px; }
@@ -255,9 +255,12 @@ onMounted(load)
 .switch-tip { font-size: 12px; color: var(--dm-text-muted); }
 .card-foot { display: flex; align-items: center; margin-top: 20px; }
 .spacer { flex: 1; }
-.danger { border-color: #f3c1c1; background: #fffbfb; }
+.danger { border-color: var(--dm-danger-border); background: var(--dm-danger-bg); }
 .danger-body p { font-size: 13px; color: var(--dm-text); margin: 0 0 12px; line-height: 1.7; }
-.danger-body code { background: #fdecec; color: var(--dm-danger); font-weight: 700; padding: 1px 8px; border-radius: 5px; font-family: Consolas, monospace; }
+.danger-body code { background: var(--dm-danger-bg); color: var(--dm-danger); font-weight: 700; padding: 1px 8px; border-radius: 5px; font-family: Consolas, monospace; }
 .danger-line { display: flex; gap: 10px; max-width: 420px; }
 .danger-input { flex: 1; }
+@media (max-width: 1280px) {
+  .form-grid { grid-template-columns: 1fr; }
+}
 </style>

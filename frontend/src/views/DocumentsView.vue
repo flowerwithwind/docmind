@@ -202,12 +202,12 @@ onMounted(() => load(1))
 .spacer { flex: 1; }
 .doc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; }
 .doc-card { padding: 18px; background: var(--dm-card); border: 1px solid var(--dm-border); border-radius: var(--dm-radius); box-shadow: var(--dm-shadow); cursor: pointer; transition: box-shadow .15s, transform .15s, border-color .15s; }
-.doc-card:hover { box-shadow: var(--dm-shadow-lg); transform: translateY(-2px); border-color: #c7d8f2; }
-.doc-card.failed { border-color: #f3c1c1; }
+.doc-card:hover { box-shadow: var(--dm-shadow-lg); transform: translateY(-2px); border-color: var(--dm-primary-light); }
+.doc-card.failed { border-color: var(--dm-danger-border); }
 .doc-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
 .doc-name { font-size: 14px; font-weight: 600; color: var(--dm-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 4px; }
 .doc-meta { font-size: 12px; color: var(--dm-text-muted); font-variant-numeric: tabular-nums; }
-.doc-err { margin-top: 8px; font-size: 11.5px; color: var(--dm-danger); background: #fdf6f6; border-radius: 6px; padding: 6px 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.doc-err { margin-top: 8px; font-size: 11.5px; color: var(--dm-danger); background: var(--dm-danger-bg); border-radius: 6px; padding: 6px 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .doc-ops { display: flex; gap: 6px; margin-top: 14px; opacity: 0; transition: opacity .15s; }
 .doc-card:hover .doc-ops { opacity: 1; }
 .doc-cell { display: flex; align-items: center; gap: 12px; }
@@ -223,4 +223,13 @@ onMounted(() => load(1))
 .u-name { flex: 1; min-width: 0; font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .u-bar { flex: 1; }
 .u-err { font-size: 12px; color: var(--dm-danger); }
+@media (max-width: 1280px) {
+  .doc-grid { grid-template-columns: 1fr; }
+  .toolbar { flex-wrap: wrap; }
+  .search { width: 100%; }
+}
+@media (max-width: 768px) {
+  .head-row { flex-direction: column; align-items: stretch; gap: 12px; }
+  .head-row .el-button { align-self: flex-start; }
+}
 </style>

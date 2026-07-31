@@ -47,9 +47,11 @@ const placeholder = computed(() => '点击填写' + (props.field.required ? '（
 <style scoped>
 .cell { min-height: 32px; }
 .view { padding: 5px 10px; border: 1px dashed transparent; border-radius: 8px; cursor: pointer; font-size: 13px; min-height: 30px; display: flex; align-items: center; }
-.view:hover { border-color: var(--dm-primary); background: var(--dm-primary-light); }\n.view.readonly { cursor: default; }\n.view.readonly:hover { border-color: transparent; background: transparent; }
+.view:hover { border-color: var(--dm-primary); background: var(--dm-primary-light); }
+.view.readonly { cursor: default; }
+.view.readonly:hover { border-color: transparent; background: transparent; }
 .value { color: var(--dm-text); word-break: break-all; }
-.placeholder { color: #b6c2d2; font-size: 12px; }
+.placeholder { color: var(--dm-text-faint); font-size: 12px; }
 .edit .num { width: 160px; }
-.edit :deep(.el-input__wrapper), .edit :deep(.el-select__wrapper) { border-color: var(--dm-primary); box-shadow: 0 0 0 2px rgba(31,111,235,.15); }
+.edit :deep(.el-input__wrapper), .edit :deep(.el-select__wrapper) { border-color: var(--dm-primary); box-shadow: 0 0 0 2px var(--dm-ring-primary); }
 </style>

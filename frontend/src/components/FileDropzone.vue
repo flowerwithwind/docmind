@@ -47,14 +47,14 @@ function remove(i) { files.value.splice(i, 1); emit('change', files.value) }
 defineExpose({ files, clear: () => { files.value = [] } })
 </script>
 <style scoped>
-.dropzone { border: 2px dashed #cbd5e1; border-radius: var(--dm-radius); padding: 28px 20px; display: flex; flex-direction: column; align-items: center; gap: 10px; background: #fafcff; transition: border-color .15s ease, background .15s ease; }
+.dropzone { border: 2px dashed var(--dm-border-strong); border-radius: var(--dm-radius); padding: 28px 20px; display: flex; flex-direction: column; align-items: center; gap: 10px; background: var(--dm-fill); transition: border-color .15s ease, background .15s ease; }
 .dropzone.over { border-color: var(--dm-primary); background: var(--dm-primary-light); }
 .dropzone.error { border-color: var(--dm-danger); animation: dm-shake .3s; }
-.icon { color: #9fb3c8; }
+.icon { color: var(--dm-text-faint); }
 .text { font-size: 13px; color: var(--dm-text-muted); }
 .input { display: none; }
 .list { width: 100%; display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
-.item { display: flex; align-items: center; gap: 10px; background: #fff; border: 1px solid var(--dm-border); border-radius: 8px; padding: 7px 12px; font-size: 12.5px; }
+.item { display: flex; align-items: center; gap: 10px; background: var(--dm-card); border: 1px solid var(--dm-border); border-radius: 8px; padding: 7px 12px; font-size: 12.5px; }
 .name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .size { color: var(--dm-text-muted); font-variant-numeric: tabular-nums; }
 .rm { cursor: pointer; color: var(--dm-text-muted); } .rm:hover { color: var(--dm-danger); }
