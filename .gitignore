@@ -1,0 +1,31 @@
+﻿# dependencies
+node_modules/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# env
+.env
+.env.local
+
+# runtime data
+data/
+*.db
+*.sqlite3
+
+# build
+dist/
+coverage/
+*.tsbuildinfo
+
+# logs
+logs/
+*.log
+
+# IDE
+.idea/
+.vscode/
+.DS_Store
