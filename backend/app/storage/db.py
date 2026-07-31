@@ -9,8 +9,9 @@ from __future__ import annotations
 
 import json
 import sqlite3
+from collections.abc import Iterable
 from contextlib import contextmanager
-from typing import Any, Iterable
+from typing import Any
 
 from app.config import DB_PATH
 
@@ -28,6 +29,8 @@ CREATE TABLE IF NOT EXISTS documents (
   page_count INTEGER,
   char_count INTEGER,
   chunk_count INTEGER,
+  pages_json TEXT,
+  tree_json TEXT,
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL
 );
@@ -173,6 +176,15 @@ def init_db() -> None:
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     with get_conn() as conn:
         conn.executescript(SCHEMA_SQL)
+        _migrate(conn)
+
+
+def _migrate(conn: sqlite3.Connection) -> None:
+    """轻量迁移：为旧库补充缺失列（幂等）。"""
+    cols = {row[1] for row in conn.execute("PRAGMA table_info(documents)")}
+    for name, decl in (("pages_json", "TEXT"), ("tree_json", "TEXT")):
+        if name not in cols:
+            conn.execute(f"ALTER TABLE documents ADD COLUMN {name} {decl}")
 
 
 def wipe_data() -> None:

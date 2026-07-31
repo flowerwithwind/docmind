@@ -14,7 +14,7 @@ from app.config import (
     DEFAULT_TEMPERATURE,
     DEFAULT_TOP_K,
 )
-from app.llm.client import LLMClient, LLMError
+from app.llm.client import LLMClient
 from app.storage import db
 
 MODEL_KEY = "model"

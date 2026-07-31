@@ -7,7 +7,8 @@
 from __future__ import annotations
 
 import json
-from typing import Any, Iterator
+from collections.abc import Iterator
+from typing import Any
 
 import httpx
 
@@ -17,9 +18,7 @@ from app.config import (
     DEFAULT_EMBEDDING_API_KEY,
     DEFAULT_EMBEDDING_BASE_URL,
     DEFAULT_EMBEDDING_MODEL,
-    DEFAULT_MAX_TOKENS,
     DEFAULT_MODEL,
-    DEFAULT_TEMPERATURE,
 )
 
 
@@ -99,8 +98,10 @@ class LLMClient:
             "stream": True,
         }
         try:
-            with httpx.Client(timeout=self.timeout) as client:
-                with client.stream("POST", f"{self.base_url}/chat/completions", json=payload, headers=self._headers()) as resp:
+            with (
+                httpx.Client(timeout=self.timeout) as client,
+                client.stream("POST", f"{self.base_url}/chat/completions", json=payload, headers=self._headers()) as resp,
+            ):
                     if resp.status_code >= 400:
                         raise LLMError(f"模型接口错误 {resp.status_code}: {resp.read()[:300]}")
                     for line in resp.iter_lines():

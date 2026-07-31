@@ -9,7 +9,8 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 def now_iso() -> str:
-    return datetime.now().isoformat(timespec="seconds")
+    # 全项目统一使用本地时间（无时区），避免 UI 展示混乱
+    return datetime.now().isoformat(timespec="seconds")  # noqa: DTZ005
 
 
 class DocStatus(StrEnum):
@@ -130,7 +131,7 @@ class TreeNode(BaseModel):
     title: str
     level: int
     page: int | None = None
-    children: list["TreeNode"] = []
+    children: list[TreeNode] = []
     chunk_ids: list[int] = []
 
 

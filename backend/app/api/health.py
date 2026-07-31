@@ -15,7 +15,7 @@ def health() -> dict:
     try:
         db.get_setting("ping", "pong")
         storage_ok = True
-    except Exception:
+    except Exception:  # noqa: BLE001 - 健康检查需兜底任何存储异常
         storage_ok = False
     return {
         "status": "ok" if storage_ok else "degraded",
