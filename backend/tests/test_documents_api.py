@@ -4,7 +4,6 @@ from __future__ import annotations
 import time
 
 from app.storage import files as file_store
-
 from tests.conftest import upload_and_wait
 from tests.fixtures.documents import (
     make_docx_with_table_bytes,

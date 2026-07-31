@@ -6,6 +6,7 @@ import io
 import json
 
 import pytest
+
 from app.llm.client import LLMError
 from app.services import table_qa as qa_svc
 from app.services import tables as table_convert

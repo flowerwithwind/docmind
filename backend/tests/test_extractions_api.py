@@ -7,9 +7,9 @@ import json
 import time
 
 import openpyxl
+
 from app.llm.client import LLMError
 from app.storage import db
-
 from tests.helpers import (
     latest_extraction,
     schema_id,

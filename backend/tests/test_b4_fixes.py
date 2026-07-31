@@ -4,10 +4,10 @@ from __future__ import annotations
 import threading
 
 import pytest
+
 from app.services.extraction import ExtractionError
 from app.services.tasks import schedule_extract
 from app.storage import db
-
 from tests.helpers import schema_id
 
 
