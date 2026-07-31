@@ -49,7 +49,7 @@ def update_schema(schema_id: int, body: SchemaIn) -> SchemaOut:
     return _row_to_out(db.get_schema(schema_id))
 
 
-@router.delete("/{schema_id}", status_code=204)
+@router.delete("/{schema_id}", status_code=204, response_model=None)
 def delete_schema(schema_id: int) -> None:
     row = db.get_schema(schema_id)
     if not row:
