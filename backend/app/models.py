@@ -1,4 +1,5 @@
 """Pydantic 数据模型与枚举。"""
+
 from __future__ import annotations
 
 from datetime import datetime
@@ -237,7 +238,7 @@ class CompareResult(BaseModel):
 class ChatRequest(BaseModel):
     session_id: int | None = None
     question: str = Field(min_length=1, max_length=4000)
-    doc_ids: list[int] = Field(min_length=1)
+    doc_ids: list[int] | None = None
     stream: bool = True
 
 

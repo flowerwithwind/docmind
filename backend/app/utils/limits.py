@@ -1,4 +1,5 @@
 """简易内存限流中间件（滑动窗口，按客户端 IP）。"""
+
 from __future__ import annotations
 
 import time
@@ -18,6 +19,8 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         self.windows: dict[str, deque[float]] = defaultdict(deque)
 
     async def dispatch(self, request: Request, call_next):
+        if self.limit <= 0:
+            return await call_next(request)
         if request.url.path.startswith("/api/"):
             ip = request.client.host if request.client else "unknown"
             now = time.monotonic()

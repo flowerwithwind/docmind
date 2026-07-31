@@ -1,4 +1,5 @@
 """文档 API：上传、列表、详情（页流/结构树/分块）、重解析、删除。"""
+
 from __future__ import annotations
 
 from typing import Any
@@ -7,6 +8,7 @@ from fastapi import APIRouter, HTTPException, UploadFile
 
 from app.config import MAX_FILES_PER_UPLOAD
 from app.models import ChunkOut
+from app.services.retrieval import INDEX
 from app.services.tasks import schedule_parse
 from app.storage import db
 from app.storage import files as file_store
@@ -27,15 +29,23 @@ def upload_documents(files: list[UploadFile]) -> list[dict[str, Any]]:
     if not files:
         raise HTTPException(status_code=422, detail="未选择文件")
     if len(files) > MAX_FILES_PER_UPLOAD:
-        raise HTTPException(status_code=422, detail=f"单次最多上传 {MAX_FILES_PER_UPLOAD} 个文件")
+        raise HTTPException(
+            status_code=422, detail=f"单次最多上传 {MAX_FILES_PER_UPLOAD} 个文件"
+        )
     results: list[dict[str, Any]] = []
     for f in files:
         if not file_store.is_allowed(f.filename or ""):
-            raise HTTPException(status_code=422, detail=f"不支持的文件类型：{f.filename}")
+            raise HTTPException(
+                status_code=422, detail=f"不支持的文件类型：{f.filename}"
+            )
         stored, original, size = safe_store(f)
         doc_id = db.create_document(
-            name=original, filename=stored, original_name=original,
-            ext=file_store.ext_of(original), mime=f.content_type, size_bytes=size,
+            name=original,
+            filename=stored,
+            original_name=original,
+            ext=file_store.ext_of(original),
+            mime=f.content_type,
+            size_bytes=size,
             created_at=db.now_iso(),
         )
         task_id = schedule_parse(doc_id)
@@ -45,11 +55,15 @@ def upload_documents(files: list[UploadFile]) -> list[dict[str, Any]]:
 
 
 @router.get("")
-def list_documents(query: str = "", status: str = "", ext: str = "",
-                   page: int = 1, page_size: int = 20) -> dict[str, Any]:
+def list_documents(
+    query: str = "", status: str = "", ext: str = "", page: int = 1, page_size: int = 20
+) -> dict[str, Any]:
     rows, total = db.list_documents(
-        query=query, status=status, ext=ext,
-        page=max(page, 1), page_size=min(max(page_size, 1), 100),
+        query=query,
+        status=status,
+        ext=ext,
+        page=max(page, 1),
+        page_size=min(max(page_size, 1), 100),
     )
     return {"total": total, "items": [_doc_out(r) for r in rows]}
 
@@ -88,4 +102,5 @@ def delete_document(doc_id: int) -> dict[str, Any]:
             file_store.remove_image(c["image_path"])
     file_store.remove_document_files(row["filename"])
     db.delete_document(doc_id)
+    INDEX.drop(doc_id)  # drop stale index
     return {"deleted": doc_id}

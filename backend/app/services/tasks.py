@@ -1,10 +1,12 @@
-﻿"""异步任务执行器：解析任务（线程池执行，避免阻塞事件循环）。"""
+"""异步任务执行器：解析任务（线程池执行，避免阻塞事件循环）。"""
+
 from __future__ import annotations
 
 import asyncio
 
 from app.services.chunker import attach_chunk_ids, build_chunks, build_tree
 from app.services.parser import ParseError, parse_document
+from app.services.retrieval import INDEX
 from app.storage import db
 from app.storage.files import file_path
 from app.utils.logging import get_logger
@@ -45,15 +47,22 @@ def _parse_work(task_id: int, doc_id: int) -> dict:
         c.setdefault("section_path", None)
         c.setdefault("title", None)
         c.setdefault("image_path", None)
-        c.update({
-            "doc_id": doc_id,
-            "created_at": db.now_iso(),
-        })
+        c.update(
+            {
+                "doc_id": doc_id,
+                "created_at": db.now_iso(),
+            }
+        )
     db.insert_chunks(chunks)
+    INDEX.drop(doc_id)  # rebuild in-memory index
     db.update_document(
-        doc_id, status="parsed", parse_error=None,
-        page_count=result["page_count"], char_count=result["char_count"],
-        chunk_count=len(chunks), pages_json=db.jdumps(result["pages"]),
+        doc_id,
+        status="parsed",
+        parse_error=None,
+        page_count=result["page_count"],
+        char_count=result["char_count"],
+        chunk_count=len(chunks),
+        pages_json=db.jdumps(result["pages"]),
         tree_json=db.jdumps(tree),
     )
     return {"chunk_count": len(chunks), "page_count": result["page_count"]}
@@ -62,8 +71,13 @@ def _parse_work(task_id: int, doc_id: int) -> dict:
 async def run_parse(task_id: int, doc_id: int) -> None:
     try:
         res = await asyncio.to_thread(_parse_work, task_id, doc_id)
-        db.update_task(task_id, status="succeeded", progress=100,
-                       message="解析完成", result_json=db.jdumps(res))
+        db.update_task(
+            task_id,
+            status="succeeded",
+            progress=100,
+            message="解析完成",
+            result_json=db.jdumps(res),
+        )
     except ParseError as e:
         db.update_document(doc_id, status="failed", parse_error=str(e))
         db.update_task(task_id, status="failed", error=str(e))
