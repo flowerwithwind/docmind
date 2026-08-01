@@ -5,7 +5,6 @@ from __future__ import annotations
 import json
 
 from app.llm.client import LLMError
-
 from tests.conftest import upload_and_wait
 from tests.fixtures.documents import make_docx_bytes
 

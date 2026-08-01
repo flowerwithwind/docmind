@@ -5,7 +5,6 @@ import time
 
 from app.config import FILES_DIR
 from app.storage import db
-
 from tests.helpers import schema_id, start_extract
 
 

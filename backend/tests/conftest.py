@@ -11,13 +11,13 @@ os.environ["DOCMIND_API_KEY"] = ""
 os.environ["DOCMIND_RATE_LIMIT"] = "0"
 
 import pytest
+from fastapi.testclient import TestClient
+
 from app.main import app
 from app.seed import ensure_seed_schemas
 from app.services.retrieval import INDEX
 from app.services.table_store import table_store
 from app.storage import db
-from fastapi.testclient import TestClient
-
 from tests.fixtures.documents import make_docx_bytes
 
 
