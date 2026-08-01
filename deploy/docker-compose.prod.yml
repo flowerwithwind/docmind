@@ -13,11 +13,14 @@ services:
       DOCMIND_EMBEDDING_API_KEY: ${DOCMIND_EMBEDDING_API_KEY:-}
       DOCMIND_EMBEDDING_BASE_URL: ${DOCMIND_EMBEDDING_BASE_URL:-}
       DOCMIND_RATE_LIMIT: ${DOCMIND_RATE_LIMIT:-300}
+      OMP_NUM_THREADS: "1"
       TZ: Asia/Shanghai
     volumes:
       - docmind-data:/data
     ports:
       - "${BACKEND_PORT:-18100}:8000"
+    mem_limit: 768m
+    cpus: "1.0"
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=4)"]
       interval: 15s
@@ -39,6 +42,8 @@ services:
         condition: service_healthy
     ports:
       - "${HTTP_PORT:-18180}:80"
+    mem_limit: 128m
+    cpus: "0.5"
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://127.0.0.1/healthz"]
       interval: 30s

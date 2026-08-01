@@ -116,3 +116,16 @@ docs/
 ## 里程碑
 
 M1 骨架 → M2 解析层 → M3 问答层 → M4 抽取校验 → M5 对比演示 → M6 前端美观 → M7 部署工程化 → M8 质量门禁 → B1~B6（v1.1.0 发布，详见 [docs/需求开发文档.md](docs/需求开发文档.md) §9）
+
+## 服务器自动部署（端口 18100 / 18180）
+
+`git push origin main` 触发 GitHub Actions `Deploy DocMind`：测试 → 构建推送 Docker Hub 镜像（`flowerwithwind/docmind-backend` / `docmind-frontend`）→ SSH 部署到 `/opt/docmind`（后端 18100，浏览器 18180）。
+
+仓库 Secrets 需配置：`DOCKER_USERNAME` `DOCKER_PASSWORD` `SERVER_HOST` `SERVER_USER` `SERVER_PASSWORD`（可选：`SERVER_PORT` `BACKEND_PORT` `HTTP_PORT` `DOCMIND_API_KEY` `DOCMIND_BASE_URL` `DOCMIND_MODEL` `DOCMIND_EMBEDDING_API_KEY` `DOCMIND_EMBEDDING_BASE_URL`）。
+
+服务器一次性准备：
+
+```bash
+sudo mkdir -p /opt/docmind && sudo chown -R ubuntu:ubuntu /opt/docmind
+sudo ufw allow 18100/tcp && sudo ufw allow 18180/tcp
+```
