@@ -1,0 +1,55 @@
+# DocMind 生产编排（服务器目录 /opt/docmind，由 GitHub Actions deploy.yml 生成）
+# 对外端口：后端 18100，浏览器 18180
+services:
+  backend:
+    image: ${DOCKER_USERNAME}/docmind-backend:${IMAGE_TAG:-latest}
+    container_name: docmind-backend
+    restart: unless-stopped
+    environment:
+      DOCMIND_DATA_DIR: /data
+      DOCMIND_API_KEY: ${DOCMIND_API_KEY:-}
+      DOCMIND_BASE_URL: ${DOCMIND_BASE_URL:-}
+      DOCMIND_MODEL: ${DOCMIND_MODEL:-}
+      DOCMIND_EMBEDDING_API_KEY: ${DOCMIND_EMBEDDING_API_KEY:-}
+      DOCMIND_EMBEDDING_BASE_URL: ${DOCMIND_EMBEDDING_BASE_URL:-}
+      DOCMIND_RATE_LIMIT: ${DOCMIND_RATE_LIMIT:-300}
+      TZ: Asia/Shanghai
+    volumes:
+      - docmind-data:/data
+    ports:
+      - "${BACKEND_PORT:-18100}:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=4)"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  frontend:
+    image: ${DOCKER_USERNAME}/docmind-frontend:${IMAGE_TAG:-latest}
+    container_name: docmind-frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "${HTTP_PORT:-18180}:80"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/healthz"]
+      interval: 30s
+      timeout: 8s
+      retries: 5
+      start_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  docmind-data:
